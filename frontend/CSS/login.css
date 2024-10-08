@@ -1,3 +1,18 @@
+:root{
+    /* Cores */
+    --blue-dark: #031C30;
+    --red: #9C1717;
+    --gray: #757575;
+    --green: #179C2C;
+    --purple: #65558F;
+    --gray-dark: #667A8A;
+    --white: #FFFFFF;
+    --white-container: #D9D9D9;
+
+    /* Fontes */
+    --font-family: 'Poppins';
+}
+
 html, body {
     height: 100%;
     width: 100%;
@@ -17,16 +32,16 @@ html, body {
 .blackContainer {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: center; 
     width: 65%;
-    color: white;
-    background-color: #031C30;
+    color: var(--white);
+    background-color: var(--blue-dark);
 }
 
 .whiteContainer {
     width: 35%;
     height: 100%;
-    background-color: #D9D9D9;
+    background-color: var(--white-container);
 }
 
 .title {
@@ -59,8 +74,8 @@ html, body {
     width: 40%;
     height: 45px;
     border-radius: 20px;
-    background-color: #031C30;
-    color: white;
+    background-color: var(--blue-dark);
+    color: var(--white);
     margin-top: 5%;
     margin-bottom: 3%;
 }
