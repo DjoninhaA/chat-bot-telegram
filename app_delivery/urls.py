@@ -4,5 +4,6 @@ from produto import urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('produto/', include('produto.urls'))
+    path('produto/', include('produto.urls')),
+    path('pedido/', include('pedido.urls'))
 ]
