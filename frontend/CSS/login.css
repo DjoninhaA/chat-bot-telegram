@@ -81,7 +81,7 @@ html, body {
 }
 
 .forgot {
-    color: blue;
+    color: var(--blue-dark);
     text-decoration: underline;
     cursor: pointer;
 }

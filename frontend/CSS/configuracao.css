@@ -1,3 +1,18 @@
+:root{
+    /* Cores */
+    --blue-dark: #031C30;
+    --red: #9C1717;
+    --gray: #757575;
+    --green: #179C2C;
+    --purple: #65558F;
+    --gray-dark: #667A8A;
+    --white: #FFFFFF;
+    --white-container: #D9D9D9;
+
+    /* Fontes */
+    --font-family: 'Poppins';
+}
+
 .centralContainer {
     width: 100%;
     height: 100%;
@@ -10,7 +25,7 @@
 .divConfig {
     width: 60%;
     height: 70%;
-    background-color: #F5F5F5;
+    background-color: var(--white);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -66,8 +81,8 @@
     width: 30%;
     height: 100%;
     border-radius: 20px;
-    background-color: #031C30;
-    color: white;
+    background-color: var(--blue-dark);
+    color: var(--white);
 }
 
 #overlay {
@@ -76,6 +91,6 @@
     position: fixed;
     top: 0;
     left: 0;
-    background-color: #d9d9d9a7;
+    background-color: var(--white-container);
     z-index: 1;
 }
