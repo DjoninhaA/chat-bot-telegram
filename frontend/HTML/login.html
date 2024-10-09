@@ -13,16 +13,56 @@
             <span style="font-size: 30px; margin-left: 5%;">Sua loja virtual de forma fácil e eficiente</span>
         </div>
         <div class="whiteContainer">
-            <div class="title"><span>Seja bem vindo!</span></div>
-            <form action="/login" method="post">
-                <div class="divInputs">
-                    <input class="inputStyle" type="text" name="email" placeholder="Email">
-                    <input class="inputStyle" type="password" name="password" placeholder="Senha">
-                    <button class="btnStyle" type="submit">Entrar</button>
-                    <span>Esqueceu a senha?</span>
-                </div>
-            </form>
+        <div class="title"><span>Seja bem vindo!</span></div>
+            <div class="divInputs">
+                <input class="inputStyle" id="email" type="text" name="email" placeholder="Email">
+                <input class="inputStyle" id="password" type="password" name="password" placeholder="Senha">
+                <button class="btnStyle" type="submit">Entrar</button>
+                <a href="/novaSenha"><span class="forgot">Esqueceu a senha?</span></a>
+            </div>
         </div>
     </div>
+    <script>
+        function sendLogin() {
+            const user = document.getElementById('email').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            if(!user || !pass) {
+                toastAlert('warn', 'Por Favor, preencha todos os campos!');
+                return;
+            }
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({user, pass})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.error) {
+                    toastAlert('error', data.error);
+                    return;
+                }
+                if(data.success) {
+                    window.location.href = '/home';
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                toastAlert('error', 'Erro ao fazer login!');
+            });
+        }
+
+        document.querySelector('.btnStyle').addEventListener('click', sendLogin);
+
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') {
+                sendLogin();
+            }
+        });
+    </script>
+    <script src="/frontend/JS/toastAlert.js"></script>
 </body>
 </html>
