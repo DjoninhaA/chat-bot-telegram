@@ -1,10 +1,25 @@
+:root{
+    /* Cores */
+    --blue-dark: #031C30;
+    --red: #9C1717;
+    --gray: #757575;
+    --green: #179C2C;
+    --purple: #65558F;
+    --gray-dark: #667A8A;
+    --white: #FFFFFF;
+    --white-container: #D9D9D9;
+
+    /* Fontes */
+    --font-family: 'Poppins';
+}
+
 html, body {
     height: 100%;
     width: 100%;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins';
+    font-family: var(--font-family);
 }
 
 .geralContainer {
@@ -22,7 +37,7 @@ html, body {
     top: 5%;
     right: 1.5%;
     font-size: 24px;
-    color: white;
+    color: var(--white);
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     z-index: 20;

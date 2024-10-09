@@ -3,6 +3,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 
-def ver_produtos(request):
+def get_products(request):
     
-    return render(request, 'ver_produtos.html')
+    return render(request, 'produtos.html')

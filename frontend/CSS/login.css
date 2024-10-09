@@ -79,3 +79,9 @@ html, body {
     margin-top: 5%;
     margin-bottom: 3%;
 }
+
+.forgot {
+    color: var(--blue-dark);
+    text-decoration: underline;
+    cursor: pointer;
+}
