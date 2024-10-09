@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/frontend/CSS/sidebar.css">
+    <link rel="stylesheet" href="/frontend/CSS/configuracao.css">
+    <link rel="stylesheet" href="/frontend/CSS/geral.css">
+    <title>Configurações</title>
+</head>
+<body onload="loadSidebar()">
+    <div class="geralContainer">
+        <div class="sidebar"></div>
+        <div class="centralContainer">
+            <div class="divConfig">
+                <div class="contentContainer">
+                    <span class="config">Configure seu Bot</span>
+                    <label for="botName" class="lbStyle">Escolha o nome do seu bot</label>
+                    <input type="text" id="botName" class="inputStyle" placeholder="Nome Bot...">
+                    <label for="botDesc" class="lbStyle">Dê uma descrição para o seu bot</label>
+                    <textarea id="botDesc" class="inputStyle textarea" placeholder="Descrição Bot..." rows="4" cols="30"></textarea>
+                </div>
+                <div class="divBtn">
+                    <button class="btnStyle" id="sendBtn">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="overlay"></div>
+    <script src="/frontend/JS/toastAlert.js"></script>
+    <script src="/frontend/JS/config.js"></script>
+    <script>
+        function loadSidebar() {
+            fetch("sidebar.html")
+            .then(response => response.text())
+            .then(data => {
+                document.querySelector(".sidebar").innerHTML = data;
+            });
+        }
+    </script>
+</body>
+</html>
