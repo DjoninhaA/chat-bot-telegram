@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from rest_framework.response import Response
+from django.http import HttpResponse, JsonResponse
+from rest_framework import status
 
+from rest_framework.decorators import api_view
 
 
 from  .serializers import UserSerializer
@@ -10,7 +13,7 @@ from  .serializers import UserSerializer
 def config_bot(request):
     return render(request, 'bot.html')
     
-    
+@api_view(['POST'])   
 def create_bot(request):
     if request.method == 'POST':
         new_bot = request.data

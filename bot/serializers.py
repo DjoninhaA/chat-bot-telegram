@@ -5,4 +5,4 @@ from .models import Bot
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bot
-        fields = ('id', 'Bot_name', 'Bot_Description')
+        fields = ['Bot_name', 'Bot_Description']
