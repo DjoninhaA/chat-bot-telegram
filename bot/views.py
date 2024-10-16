@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from rest_framework import Response, status
+from rest_framework.response import Response
+
 
 
 from  .serializers import UserSerializer
