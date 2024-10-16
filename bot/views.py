@@ -12,6 +12,9 @@ from  .serializers import UserSerializer
 
 def config_bot(request):
     return render(request, 'bot.html')
+
+def home_bot(request):
+    return render(request, 'home_bot.html')
     
 @api_view(['POST'])   
 def create_bot(request):
