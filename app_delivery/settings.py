@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'backend',
     'produto.apps.ProdutoConfig',
-    'pedido.apps.PedidoConfig'
+    'pedido.apps.PedidoConfig',
+    'bot.apps.BotConfig'
 ]
 
 MIDDLEWARE = [
