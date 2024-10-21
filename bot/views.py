@@ -14,7 +14,7 @@ def config_bot(request):
     return render(request, 'bot.html')
 
 def home_bot(request):
-    return render(request, 'home_bot.html')
+    return render(request, 'login.html')
     
 @api_view(['POST'])   
 def create_bot(request):
