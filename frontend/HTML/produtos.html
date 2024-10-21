@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/frontend/CSS/geral.css">
+    <link rel="stylesheet" href="/frontend/CSS/sidebar.css">
+    <link rel="stylesheet" href="/frontend/CSS/produtos.css">
+    <title>Produtos</title>
+</head>
+<body onload="loadSidebar()">
+    <div class="geralContainer">
+        <div class="sidebar"></div>
+        <div class="divContainer">
+            <div class="divTitle"><span class="title">Lista de Produtos</span></div>
+            <div class="searchContainer">
+                <div class="divSearch">
+                    <img class="searchImg" src="/frontend/images/Search.png" alt="Pesquisar">
+                    <input type="text" class="inputSearch" id="searchValue" placeholder="Pesquisar" autocomplete="off">
+                </div>
+                <button class="addProd"">Adicionar Produto</button>
+            </div>
+            <div class="divTable">
+                <table class="prodTable">
+                    <tr>
+                        <th class="thStyle" id="thCheckbox"><input type="checkbox" name="checkbox" value="all" class="checkboxStyle"></td>
+                        <th class="thStyle" id="thFoto">Foto</td>
+                        <th class="thStyle" id="thNome">Nome <span id="arrowName" class="arrowsFilter">⇅</span> </td>
+                        <th class="thStyle" id="thCate">Categoria <span id="arrowCate" class="arrowsFilter">⇅</span> </td>
+                        <th class="thStyle" id="thPreco">Preço <span id="arrowPrice" class="arrowsFilter">⇅</span> </td>
+                        <th class="thStyle" id="thImages"></td>
+                    </tr>
+                    <tr>
+                        <td class="tdStyle"><input type="checkbox" name="checkbox" value="1" class="checkboxStyle"></td>
+                        <td class="tdStyle"><img src="/frontend/images/placeholder.png" alt="Foto" class="imgStyle"></td>
+                        <td class="tdStyle">Produto 1</td>
+                        <td class="tdStyle">Categoria 1</td>
+                        <td class="tdStyle">R$ 10,00</td>
+                        <td class="tdStyle">
+                            <img src="/frontend/images/edit.png" alt="Editar" class="imgEdit">
+                            <img src="/frontend/images/delete.png" alt="Excluir" class="imgDelete">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="divBtnFooter">
+                <span class="styleFooter disabledArrows" id="priorBtn"><</span>
+                <span class="totalPages">1</span>
+                <span class="styleFooter" id="nextBtn">></span>
+            </div>
+        </div>
+    </div>
+    <script src="/frontend/JS/toastAlert.js"></script>
+    <script>
+        function loadSidebar() {
+            fetch("sidebar.html")
+            .then(response => response.text())
+            .then(data => {
+                document.querySelector(".sidebar").innerHTML = data;
+            });
+        }
+    </script>
+</body>
+</html>
