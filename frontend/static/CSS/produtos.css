@@ -1,0 +1,131 @@
+.divContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: #eaedef;
+}
+
+.divTitle {
+    margin-top: 2%;
+    display: flex;
+    width: 90%;
+    height: 10%;
+    align-items: center;
+    background-color: var(--blue-dark);
+}
+
+.title {
+    color: var(--white);
+    font-size: 28px;
+    margin-left: 3%;
+}
+
+.searchContainer {
+    margin-top: 1%;
+    display: flex;
+    width: 87%;
+    height: 5%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.divSearch {
+    width: 35%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    border: 1px solid var(--gray);
+    background-color: var(--white);
+}
+
+.inputSearch {
+    width: 95%;
+    height: 90%;
+    border: none;
+    outline: none;
+    background-color: var(--white);
+    font-size: 16px;
+}
+
+.searchImg {
+    cursor: pointer;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.addProd {
+    width: 20%;
+    height: 100%;
+    background-color: var(--blue-dark);
+    border: 1px solid var(--gray);
+    cursor: pointer;
+    color: var(--white);
+    font-size: 17px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+}
+
+.addProd:hover {
+    background-color: var(--blue);
+    border: none;
+}
+
+.divTable {
+    width: 90%;
+    height: 74%;
+    margin-top: 1%;
+    overflow: auto;
+}
+
+.prodTable {
+    width: 95%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    margin-top: 1.5%;
+    margin-left: 2.5%;
+}
+
+.thStyle {
+    font-size: 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--gray);
+}
+
+.tdStyle {
+    font-size: 18px;
+    text-align: center;
+    border-bottom: 1px solid var(--gray);
+    padding: 1%;
+}
+
+.divBtnFooter {
+    width: 90%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.styleFooter {
+    font-size: 30px;
+    font-weight: bold;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.styleFooter:hover {
+    color: var(--blue);
+    cursor: pointer;
+}
+
+.totalPages {
+    width: 1.7%;
+    padding: 5px;
+    font-size: 18px;
+    text-align: center;
+    color: var(--white);
+    background-color: var(--blue-dark);
+    border-radius: 10px;
+    cursor: pointer;
+}
