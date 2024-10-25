@@ -11,7 +11,7 @@ from  .serializers import UserSerializer
 
 
 def config_bot(request):
-    return render(request, 'bot.html')
+    return render(request, 'configuracao.html')
 
 def home_bot(request):
     return render(request, 'login.html')
