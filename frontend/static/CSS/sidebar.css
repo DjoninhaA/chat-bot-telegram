@@ -1,18 +1,3 @@
-:root{
-    /* Cores */
-    --blue-dark: #031C30;
-    --red: #9C1717;
-    --gray: #757575;
-    --green: #179C2C;
-    --purple: #65558F;
-    --gray-dark: #667A8A;
-    --white: #FFFFFF;
-    --white-container: #D9D9D9;
-
-    /* Fontes */
-    --font-family: 'Poppins';
-}
-
 html, body {
     height: 100%;
     width: 100%;
@@ -24,6 +9,7 @@ html, body {
 
 .sidebar {
     display: flex;
+    z-index: 1;
     flex-direction: column;
     justify-content: space-between;
     width: 18%;

@@ -1,16 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/frontend/CSS/sidebar.css">
-    <link rel="stylesheet" href="/frontend/CSS/configuracao.css">
-    <link rel="stylesheet" href="/frontend/CSS/geral.css">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="/frontend/static/css/sidebar.css"/>
+    <link rel="stylesheet" href="/frontend/static/css/configuracao.css"/>
+    <link rel="stylesheet" href="/frontend/static/css/geral.css"/>
     <title>Configurações</title>
 </head>
-<body onload="loadSidebar()">
+<body>
     <div class="geralContainer">
-        <div class="sidebar"></div>
+        {% include 'sidebar.html' %}
         <div class="centralContainer">
             <div class="divConfig">
                 <div class="contentContainer">
@@ -27,16 +28,7 @@
         </div>
     </div>
     <div id="overlay"></div>
-    <script src="/frontend/JS/toastAlert.js"></script>
-    <script src="/frontend/JS/config.js"></script>
-    <script>
-        function loadSidebar() {
-            fetch("sidebar.html")
-            .then(response => response.text())
-            .then(data => {
-                document.querySelector(".sidebar").innerHTML = data;
-            });
-        }
-    </script>
+    <script src="{% static 'toastAlert.js' %}"></script>
+    <script src="{% static 'config.js' %}"></script>
 </body>
 </html>
