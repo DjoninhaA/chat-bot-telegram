@@ -51,6 +51,18 @@
             </div>
         </div>
     </div>
+    <div id="overlay"></div>
+    <div id="modalDelete">
+        <p id="deleteMsg"></p>
+        <div class="divBtns">
+            <button class="styleBtn" id="cancelDelete">Cancelar</button>
+            <button class="styleBtn" id="confirmDelete">Deletar</button>
+        </div>
+    </div>
+    <script>
+        const activeElement = document.getElementById("{{ active_page }}").classList.add("selected");
+    </script>
+    <script src="{% static 'produtos.js' %}"></script>
     <script src="{% static 'toastAlert.js' %}"></script>
 </body>
 </html>

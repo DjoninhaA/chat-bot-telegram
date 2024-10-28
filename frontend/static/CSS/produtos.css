@@ -100,6 +100,10 @@
     padding: 1%;
 }
 
+.imgDelete, .imgEdit {
+    cursor: pointer;
+}
+
 .divBtnFooter {
     width: 90%;
     display: flex;
@@ -128,4 +132,59 @@
     background-color: var(--blue-dark);
     border-radius: 10px;
     cursor: pointer;
+}
+
+#modalDelete {
+    display: none;
+    position: fixed;
+    width: auto;
+    height: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    background-color: var(--blue-dark);
+    padding: 15px;
+    z-index: 10;
+}
+
+.divBtns {
+    height: 28%;
+    display: flex;
+    justify-content: end;
+    align-items: end;
+}
+
+#deleteMsg {
+    text-align: center;
+    font-size: 20px;
+}
+
+.styleBtn {
+    width: 100px;
+    height: 25px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+#cancelDelete {
+    background-color: #3E4349;
+    color: white;
+    border: 1px solid #d2d2d2;
+}
+
+#cancelDelete:hover {
+    background-color: #000000;
+}
+
+#confirmDelete {
+    background-color: #54EC54;
+    color: black;
+    border: 1px solid #d2d2d2;
+    margin-left: 2%;
+}
+
+#confirmDelete:hover {
+    background-color: #59ff59;
+    border: 1px solid white;
 }
