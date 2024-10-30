@@ -27,21 +27,21 @@ function addTableLines(data) {
         const newLines = document.createElement('tr');
         newLines.innerHTML = `
             <td class="tdStyle"><input type="checkbox" name="checkbox" value="${item.id}" class="checkboxStyle"></td>
-            <td class="tdStyle"><img src="{% static '/images/placeholder.png' %}" alt="Foto" class="imgStyle"></td>
+            <td class="tdStyle"><img src="${imagePaths.placeholder}" alt="Foto" class="imgStyle"></td>
             <td class="tdStyle">${item.nome}</td>
-            <td class="tdStyle">${item.categoria.categoria}</td>
+            <td class="tdStyle">${item.subcategoria}</td>
             <td class="tdStyle">R$ ${item.preco}</td>
             <td class="tdStyle">
-                <img src="{% static 'images/edit.png' %}" 
+                <img src="${imagePaths.edit}"
                     data-id="${item.id}"
                     data-nome="${item.nome}"
                     data-descricao="${item.descricao}"
                     data-preco="${item.preco}"
-                    data-categoria="${item.categoria.id}"
-                    data-subcategoria="${item.subcategoria.id}"
+                    data-categoria="${item.categoria_id}"
+                    data-subcategoria="${item.subcategoria}"
                     data-tempo="${item.tempo_entrega}"
                     alt="Editar" class="imgEdit">
-                <img src="{% static 'images/delete.png' %}"
+                <img src="${imagePaths.delete}"
                     data-id="${item.id}"
                     data-nome="${item.nome}"
                 alt="Excluir" class="imgDelete">
@@ -105,7 +105,9 @@ document.getElementById('searchValue').addEventListener('input', () => {
 });
 
 function nextDataPage(page = 1) {
-    fetch(`/api/produtos/?page=${page}`, {
+    const urlPage = `/produto/data/?page=${page}`;
+
+    fetch(urlPage, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -113,7 +115,7 @@ function nextDataPage(page = 1) {
     })
     .then(response => response.json())
     .then(data => {
-        addTableLines(data.Produtos);
+        addTableLines(data.produtos);
         disableBtns(data.totalPages);
         currentPage = page;
     })
@@ -129,7 +131,7 @@ function searchData(page = 1) {
         return;
     }
 
-    let urlSearch = `/api/produtos/?search=${value}&page=${page}`;
+    let urlSearch = `/produtos/?search=${value}&page=${page}`;
 
     isSearching = true;
 
@@ -155,27 +157,27 @@ function searchData(page = 1) {
 function disableBtns(totalPages) {
     if (isSearching) {
         if (searchPage <= 1) {
-            priorBtn.classList.add('disabledSpan');
+            priorBtn.classList.add('disabledBtn');
         } else {
-            priorBtn.classList.remove('disabledSpan');
+            priorBtn.classList.remove('disabledBtn');
         }
 
         if (searchPage >= (totalPages)) {
-            nextBtn.classList.add('disabledSpan');
+            nextBtn.classList.add('disabledBtn');
         } else {
-            nextBtn.classList.remove('disabledSpan');
+            nextBtn.classList.remove('disabledBtn');
         }
     } else {
         if (currentPage <= 1) {
-            priorBtn.classList.add('disabledSpan');
+            priorBtn.classList.add('disabledBtn');
         } else {
-            priorBtn.classList.remove('disabledSpan');
+            priorBtn.classList.remove('disabledBtn');
         }
 
         if (currentPage >= (totalPages)) {
-            nextBtn.classList.add('disabledSpan');
+            nextBtn.classList.add('disabledBtn');
         } else {
-            nextBtn.classList.remove('disabledSpan');
+            nextBtn.classList.remove('disabledBtn');
         }
     }
 }
