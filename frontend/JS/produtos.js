@@ -104,6 +104,33 @@ document.getElementById('searchValue').addEventListener('input', () => {
     }
 });
 
+document.getElementById('confirmDelete').addEventListener('click', () => {
+    const deleteUrl = `/produto/delete/${currentId}`;
+
+    fetch(deleteUrl, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.message) {
+            overlay.style.display = 'none';
+            document.getElementById('modalDelete').style.display = 'none';
+            toastAlert('success', 'Produto excluído com sucesso');
+            nextDataPage(currentPage);
+        } else {
+            console.error('Erro ao excluir produto', data);
+            toastAlert('error', 'Erro ao excluir produto');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        toastAlert('error', 'Erro ao excluir produto');
+    });
+});
+
 function nextDataPage(page = 1) {
     const urlPage = `/produto/data/?page=${page}`;
 
