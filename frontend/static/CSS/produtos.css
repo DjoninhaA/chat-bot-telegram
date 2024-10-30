@@ -114,13 +114,14 @@
 .styleFooter {
     font-size: 30px;
     font-weight: bold;
+    cursor: pointer;
+    user-select: none;
     margin-left: 1%;
     margin-right: 1%;
 }
 
 .styleFooter:hover {
     color: var(--blue);
-    cursor: pointer;
 }
 
 .totalPages {
@@ -132,6 +133,12 @@
     background-color: var(--blue-dark);
     border-radius: 10px;
     cursor: pointer;
+}
+
+.disabledBtn {
+    pointer-events: none;
+    cursor: not-allowed;
+    color: var(--gray);
 }
 
 #modalDelete {

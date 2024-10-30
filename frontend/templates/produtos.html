@@ -31,17 +31,6 @@
                         <th class="thStyle" id="thPreco">Preço <span id="arrowPrice" class="arrowsFilter">⇅</span> </td>
                         <th class="thStyle" id="thImages"></td>
                     </tr>
-                    <tr>
-                        <td class="tdStyle"><input type="checkbox" name="checkbox" value="1" class="checkboxStyle"></td>
-                        <td class="tdStyle"><img src="{% static '/images/placeholder.png' %}" alt="Foto" class="imgStyle"></td>
-                        <td class="tdStyle">Produto 1</td>
-                        <td class="tdStyle">Categoria 1</td>
-                        <td class="tdStyle">R$ 10,00</td>
-                        <td class="tdStyle">
-                            <img src="{% static 'images/edit.png' %}" alt="Editar" class="imgEdit">
-                            <img src="{% static 'images/delete.png' %}" alt="Excluir" class="imgDelete">
-                        </td>
-                    </tr>
                 </table>
             </div>
             <div class="divBtnFooter">
@@ -61,6 +50,11 @@
     </div>
     <script>
         const activeElement = document.getElementById("{{ active_page }}").classList.add("selected");
+        const imagePaths = {
+            edit: '{% static "images/edit.png" %}',
+            delete: '{% static "images/delete.png" %}',
+            placeholder: '{% static "images/placeholder.png" %}'
+        };
     </script>
     <script src="{% static 'produtos.js' %}"></script>
     <script src="{% static 'toastAlert.js' %}"></script>
