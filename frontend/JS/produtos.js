@@ -29,17 +29,11 @@ function addTableLines(data) {
             <td class="tdStyle"><input type="checkbox" name="checkbox" value="${item.id}" class="checkboxStyle"></td>
             <td class="tdStyle"><img src="${imagePaths.placeholder}" alt="Foto" class="imgStyle"></td>
             <td class="tdStyle">${item.nome}</td>
-            <td class="tdStyle">${item.subcategoria}</td>
+            <td class="tdStyle">${item.categoria__nome}</td>
             <td class="tdStyle">R$ ${item.preco}</td>
             <td class="tdStyle">
                 <img src="${imagePaths.edit}"
                     data-id="${item.id}"
-                    data-nome="${item.nome}"
-                    data-descricao="${item.descricao}"
-                    data-preco="${item.preco}"
-                    data-categoria="${item.categoria_id}"
-                    data-subcategoria="${item.subcategoria}"
-                    data-tempo="${item.tempo_entrega}"
                     alt="Editar" class="imgEdit">
                 <img src="${imagePaths.delete}"
                     data-id="${item.id}"
@@ -49,6 +43,7 @@ function addTableLines(data) {
         `;
 
         table.appendChild(newLines);
+        addLinks();
     });
 }
 
@@ -104,8 +99,17 @@ document.getElementById('searchValue').addEventListener('input', () => {
     }
 });
 
+function addLinks() {
+    document.querySelectorAll('.imgEdit').forEach(img => {
+        img.addEventListener('click', () => {
+            const id = img.getAttribute('data-id');
+            window.location.href = `/produto/detalhes/${id}`;
+        });
+    });
+} 
+
 document.getElementById('confirmDelete').addEventListener('click', () => {
-    const deleteUrl = `/produto/delete/${currentId}`;
+    const deleteUrl = `/produto/deletar/${currentId}`;
 
     fetch(deleteUrl, {
         method: 'DELETE',
