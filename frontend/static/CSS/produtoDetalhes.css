@@ -1,0 +1,154 @@
+.divContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: #EFF2F4;
+}
+
+.divTitle {
+    margin-top: 2%;
+    display: flex;
+    width: 90%;
+    height: 10%;
+    align-items: center;
+    background-color: var(--blue-dark);
+}
+
+.title {
+    color: var(--white);
+    font-size: 28px;
+    margin-left: 3%;
+}
+
+.divInfo {
+    width: 80%;
+    height: 8%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid gray;
+    font-size: 20px;
+}
+
+.divFoto {
+    height: 15%;
+}
+
+.text {
+    width: 25%;
+}
+
+.divImg {
+    width: 40%;
+    height: 90%;
+}
+
+.imgProduto {
+    width: 35%;
+    height: 100%;
+}
+
+.divImgAction {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    margin-bottom: 3%;
+}
+
+.imgAction {
+    margin-right: 5%;
+    width: 7%;
+    cursor: pointer;
+}
+
+#deleteImg {
+    width: 9%;
+}
+
+.divBtnsFoto {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.divDesc {
+    height: 13%;
+}
+
+.divCadastrarCategoria {
+    display: flex;
+    justify-content: end;
+    width: 43%;
+}
+
+.inputStyle {
+    width: 30%;
+    height: 50%;
+    background-color: #f3f3f3;
+    resize: none;
+    border: 1px solid lightgray;
+    border-radius: 7px;
+}
+
+.inputStyle:focus {
+    outline: 1px solid lightskyblue;
+}
+
+.divBtns {
+    width: 80%;
+    height: 7%;
+    display: flex;
+    justify-content: end;
+    margin-top: 2%;
+}
+
+.styleBtn {
+    width: 15%;
+    height: 65%;
+    margin-right: 2%;
+    color: white;
+    border-radius: 20px;
+    background-color: #65558F;
+    border: none;
+}
+
+.styleBtn:hover {
+    background-color: #a78dff;
+    cursor: pointer;
+}
+
+.modalCategoria {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    width: 20%;
+    height: 20%;
+    font-size: 20px;
+    border-radius: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+    background-color: #eff2f4;
+    padding: 15px;
+    z-index: 10;
+}
+
+#cadCategoria {
+    width: 70%;
+    height: 20%;
+    margin-top: 5%;
+}
+
+#addCategoria {
+    width: 30%;
+    height: 20%;
+    margin-top: 5%;
+}
