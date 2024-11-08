@@ -1,11 +1,22 @@
+<!-- pedido/templates/pedido/pedidos.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pedidos</title>
+    <title>Lista de Pedidos</title>
 </head>
 <body>
-    <h1>pedidos Teste</h1>
+    <h1>Lista de Pedidos</h1>
+    <a href="{% url 'novo_pedido' %}">Criar Novo Pedido</a>
+    <ul>
+        {% for pedido in pedidos %}
+            <li>
+                <strong>{{ pedido.nome_produto }}</strong> - Quantidade: {{ pedido.quantidade }} - Status: {{ pedido.status }}
+                {% if pedido.observacoes %}
+                    <p>Observações: {{ pedido.observacoes }}</p>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

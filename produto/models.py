@@ -1,5 +1,7 @@
+# pedido/models.py
 from django.db import models
 
+<<<<<<< Updated upstream
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
     descricao = models.TextField()
@@ -22,3 +24,12 @@ class Produto(models.Model):
 
     def __str__(self):
         return self.nome
+=======
+class Pedido(models.Model):
+    nome_produto = models.CharField(max_length=255)
+    quantidade = models.IntegerField()
+    observacoes = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.nome_produto
+>>>>>>> Stashed changes
