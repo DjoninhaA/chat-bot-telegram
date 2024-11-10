@@ -1,6 +1,5 @@
 # produto/views.py
 from django.shortcuts import render
-<<<<<<< Updated upstream
 from django.views.decorators.csrf import csrf_exempt
 
 from django.http import JsonResponse
@@ -39,10 +38,3 @@ def produto_detete(request, id):
         return JsonResponse({'message': 'Produto deletado com sucesso!'})
     except Produto.DoesNotExist:
         return JsonResponse({'message': 'Produto não encontrado!'}, status=404)
-=======
-from .models import Produto
-
-def lista_produtos(request):
-    produtos = Produto.objects.all()
-    return render(request, 'produto/produtos.html', {'produtos': produtos})
->>>>>>> Stashed changes
