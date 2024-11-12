@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/frontend/static/CSS/geral.css">
+    <link rel="stylesheet" href="/frontend/static/CSS/sidebar.css">
+    <link rel="stylesheet" href="/frontend/static/CSS/produtoDetalhes.css">
+    <title>Produto</title>
+</head>
+<body>
+    <div class="geralContainer">
+        {% include 'sidebar.html' %}
+        <div class="divContainer">
+            <div class="divTitle">
+                <span class="title">
+                    {% if produto %} 
+                        {{ produto.nome }}
+                        <input type="hidden" id="idProduto" value="{{ produto.id }}">
+                    {% else %}
+                        Cadastrar Produto
+                    {% endif %}
+                </span>
+            </div>
+            <div class="divFoto divInfo">
+                <span class="text">Foto:</span>
+                <div class="divImg"><img src="/frontend/static/images/placeholder.png" alt="Imagem" class="imgProduto"></div>
+                <div class="divBtnsFoto">
+                    <div class="divImgAction">
+                        <img src="/frontend/static/images/addImg.png" alt="Adicionar" id="addImg" class="imgAction">
+                        <span>Adicionar Imagem</span>
+                    </div>
+                    <div class="divImgAction">
+                        <img src="/frontend/static/images/Delete.png" alt="Deletar" id="deleteImg" class="imgAction">
+                        <span>Deletar Imagem</span>
+                    </div>
+                </div>
+            </div>
+            <div class="divNome divInfo">
+                <span class="text">Nome: </span>
+                <input type="text" class="inputStyle" id="nome" value="{{ produto.nome | default:'' }}">
+            </div>
+            <div class="divDesc divInfo">
+                <span class="text">Descrição: </span>
+                <textarea class="inputStyle" id="descricao">{{ produto.descricao|default:'' }}</textarea>
+            </div>
+            <div class="divCategoria divInfo">
+                <span class="text">Categoria: </span>
+                <select class="inputStyle" id="categoria">
+                    {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}" {% if produto and produto.categoria.id == categoria.id %}selected{% endif %}>
+                            {{ categoria.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <div id="btnCategoria" class="divCadastrarCategoria">
+                    <img src="/frontend/static/images/add.png" alt="Cadastrar">
+                    <span>Cadastrar </span>
+                </div>
+            </div>
+            <div class="divSubCategoria divInfo">
+                <span class="text">Subcategoria:</span>
+                <input type="text" class="inputStyle" id="subCategoria" value="{{ produto.subcategoria|default:'' }}">
+            </div>
+            <div class="divPreco divInfo">
+                <span class="text">Preço: </span>
+                <input type="text" class="inputStyle" id="preco" value="{{ produto.preco|default:'' }}">
+            </div>
+            <div class="divTempo divInfo">
+                <span class="text">Tempo de Entrega: </span>
+                <input type="text" class="inputStyle" id="tempo" value="{{ produto.tempoDePreparo|default:'' }}">
+            </div>
+            <div class="divBtns">
+                <button class="styleBtn" id="cancelBtn">Cancelar</button>
+                {% if produto %} 
+                    <button class="styleBtn" id="editBtn">Editar</button> 
+                {% else %}
+                    <button class="styleBtn" id="addBtn">Adicionar</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div id="overlay"></div>
+    <div class="modalCategoria">
+        <div class="modalTitle">Cadastrar Categoria</div>
+        <input type="text" class="inputStyle" id="cadCategoria">
+        <button class="styleBtn" id="addCategoria">Adicionar</button>
+    </div>
+    <script>
+        const activeElement = document.getElementById("{{ active_page }}").classList.add("selected");
+    </script>
+    <script src="{% static 'produtoDetalhes.js' %}"></script>
+    <script src="{% static 'toastAlert.js' %}"></script>
+</body>
+</html>
