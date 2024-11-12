@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho de Compras</title>
+    <style>
+        .product {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+        }
+        .product img {
+            max-width: 100%;
+            height: auto;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Seu Carrinho</h1>
+    <div id="cart"></div>
+    <div class="total" id="total"></div>
+    <button onclick="finalizeOrder()">Finalizar Pedido</button>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/cart/')
+                .then(response => response.json())
+                .then(data => {
+                    const cartDiv = document.getElementById('cart');
+                    let total = 0;
+                    data.cart.forEach(product => {
+                        const productDiv = document.createElement('div');
+                        productDiv.className = 'product';
+                        productDiv.innerHTML = `
+                            <img src="${product.image}" alt="${product.name}">
+                            <h2>${product.name}</h2>
+                            <p>${product.description}</p>
+                            <p>Preço: ${product.price}</p>
+                            <p>Quantidade: ${product.quantity}</p>
+                        `;
+                        cartDiv.appendChild(productDiv);
+                        total += product.price * product.quantity;
+                    });
+                    document.getElementById('total').innerText = `Total: R$ ${total.toFixed(2)}`;
+                });
+        });
+
+        function finalizeOrder() {
+            fetch('/api/finalize_order/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(response => response.json())
+              .then(data => {
+                  alert(data.message);
+              });
+        }
+    </script>
+</body>
+</html>
