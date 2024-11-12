@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'backend',
     # 'produto.apps.ProdutoConfig',
     'produto',
     'pedido.apps.PedidoConfig',

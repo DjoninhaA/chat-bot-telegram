@@ -1,5 +1,5 @@
 from django.db import models
-from .models import Produto
+from produto.models import Produto
 
 ORDER_STATUS = ((0, 'AGUARDANDO'), (1, 'PREPARANDO'), (2, 'PRONTO'))
 
@@ -9,5 +9,5 @@ class Pedido(models.Model):
     data = models.DateTimeField(auto_now=True)
     valor = models.FloatField(null=False)
 
-    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
-    cliente = models.CharField(default=None)
+    produto = models.ManyToManyField(Produto)
+    cliente = models.CharField(max_length=255, default=None)
