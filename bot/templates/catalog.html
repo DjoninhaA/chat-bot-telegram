@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Produtos</title>
+    <style>
+        .product {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+        }
+        .product img {
+            max-width: 100%;
+            height: auto;
+        }
+        .category-menu {
+            margin-bottom: 20px;
+        }
+        .category-menu button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Catálogo de Produtos</h1>
+    <div class="category-menu" id="category-menu"></div>
+    <div id="products"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/products/')
+                .then(response => response.json())
+                .then(data => {
+                    const categoryMenu = document.getElementById('category-menu');
+                    const productsDiv = document.getElementById('products');
+
+                    data.categories.forEach(category => {
+                        const button = document.createElement('button');
+                        button.innerText = category;
+                        button.onclick = () => loadProducts(category);
+                        categoryMenu.appendChild(button);
+                    });
+
+                    function loadProducts(category) {
+                        productsDiv.innerHTML = '';
+                        data.products[category].forEach(product => {
+                            const productDiv = document.createElement('div');
+                            productDiv.className = 'product';
+                            productDiv.innerHTML = `
+                                <img src="${product.image}" alt="${product.name}">
+                                <h2>${product.name}</h2>
+                                <p>${product.description}</p>
+                                <p>Preço: ${product.price}</p>
+                                <p>Quantidade: ${product.quantity}</p>
+                                <button onclick="addToCart('${product.name}')">Adicionar ao Carrinho</button>
+                            `;
+                            productsDiv.appendChild(productDiv);
+                        });
+                    }
+
+                    // Load products for the first category by default
+                    if (data.categories.length > 0) {
+                        loadProducts(data.categories[0]);
+                    }
+                });
+        });
+
+        function addToCart(productName) {
+            fetch('/api/add_to_cart/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ product_name: productName })
+            }).then(response => response.json())
+              .then(data => {
+                  alert(data.message);
+              });
+        }
+    </script>
+</body>
+</html>
