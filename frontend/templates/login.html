@@ -5,6 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/frontend/static/CSS/login.css" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static 'entrega-bem-sucedida.png' %}"
+    />
     <title>Login</title>
   </head>
   <body>
@@ -79,6 +84,7 @@
         }
       });
     </script>
+    {% load static %}
     <script src="{% static 'JS/toastAlert.js' %}"></script>
   </body>
 </html>
