@@ -84,3 +84,20 @@ def produto_edit(request, id):
         return JsonResponse({'message': 'Produto não encontrado!'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+def produto_search(request):
+    query = request.GET.get('query', '')
+    produtos = Produto.objects.filter(nome__icontains=query).values(
+        'nome', 'descricao', 'preco', 'tempoDePreparo', 'subcategoria', 'categoria__nome'
+    )
+
+    pageNumber = int(request.GET.get('page', 1))
+    pageSize = 10
+    startIndex = (pageNumber - 1) * pageSize
+    endIndex = startIndex + pageSize
+
+    produtosLista = list(produtos[startIndex:endIndex])
+
+    totalPages = (len(produtos) + pageSize -1 ) // pageSize
+
+    return JsonResponse({'Produtos': produtosLista, 'totalPages': totalPages, 'currentPage': pageNumber})

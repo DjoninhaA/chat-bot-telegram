@@ -16,7 +16,7 @@ function addTableLines(data) {
     const oldLines = table.querySelectorAll('.tdStyle');
     oldLines.forEach(line => line.remove());
 
-    if(data.lenght <= 0) {
+    if(data.length <= 0) {
         const newLines = document.createElement('tr');
         newLines.innerHTML = `<td class="tdStyle" colspan="6">Nenhum produto encontrado</td>`;
         table.appendChild(newLines);
@@ -67,6 +67,16 @@ overlay.addEventListener('click', () => {
 document.getElementById('cancelDelete').addEventListener('click', () => {
     overlay.style.display = 'none';
     document.getElementById('modalDelete').style.display = 'none';
+});
+
+document.querySelector('.searchImg').addEventListener('click', () => {
+    searchData();
+});
+
+document.getElementById('searchValue').addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+        searchData();
+    }
 });
 
 nextBtn.addEventListener('click', () => {
@@ -162,7 +172,7 @@ function searchData(page = 1) {
         return;
     }
 
-    let urlSearch = `/produtos/?search=${value}&page=${page}`;
+    let urlSearch = `/produto/search/?query=${value}&page=${page}`;
 
     isSearching = true;
 
@@ -177,7 +187,6 @@ function searchData(page = 1) {
         addTableLines(data.Produtos);
         disableBtns(data.totalPages);
         searchPage = page;
-        document.querySelector('.searchValue').value = '';
     })
     .catch(error => {
         console.error('Error:', error);
