@@ -5,8 +5,8 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, MenuButton
 import json
 from dotenv import load_dotenv
 
-from adminPanelRequests import showProducts, showCart
-from cart import add_to_cart, get_cart
+from .adminPanelRequests import showProducts, showCart
+from .cart import add_to_cart, get_cart
 
 # Carregar variáveis de ambiente do arquivo .env
 load_dotenv()

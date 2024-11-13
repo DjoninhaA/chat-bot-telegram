@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import catalog_view, cart_view, products_api, cart_api, add_to_cart_api, finalize_order_api
+from .views import catalog_view, cart_view, products_api, cart_api, add_to_cart_api, finalize_order_api, telegram_webhook
 
 urlpatterns = [
     path('telegram-webhook/', telegram_webhook, name='telegram_webhook'),
