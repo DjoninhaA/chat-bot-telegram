@@ -9,12 +9,12 @@ load_dotenv()
 API_BASE_URL = os.getenv('API_BASE_URL')
 
 def showProducts():
-    response = requests.get(f"{API_BASE_URL}/products", auth=HTTPBasicAuth)
+    response = requests.get(f"{API_BASE_URL}/produto/data/")
     products = response.json()
     products_json = json.dumps(products)
     return products_json
 
 def showCart():
-    response = requests.get(f"{API_BASE_URL}/cart", auth=HTTPBasicAuth)
+    response = requests.get(f"{API_BASE_URL}/cart", """ auth=HTTPBasicAuth """)
     cart = response.json()
     return cart

@@ -8,6 +8,7 @@ from .telegram_bot import bot
 from django.shortcuts import render
 import json
 from dotenv import load_dotenv
+from .adminPanelRequests import showProducts
 
 # Carregar variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -26,7 +27,9 @@ def telegram_webhook(request):
     return JsonResponse({"status": "error"}, status=400)
 
 def catalog_view(request):
-    return render(request, 'catalog.html')
+    products_json = showProducts()
+    products = json.loads(products_json)
+    return render(request, 'catalog.html', {'products': products})
 
 def products_api(request):
     response = requests.get(f'{API_BASE_URL}/products')  # Substitua pela URL da sua API externa

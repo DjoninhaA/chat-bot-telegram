@@ -3,7 +3,7 @@ from .views import catalog_view, cart_view, products_api, cart_api, add_to_cart_
 
 urlpatterns = [
     path('telegram-webhook/', telegram_webhook, name='telegram_webhook'),
-    path('catalog/', catalog_view, name='catalog'),
+    path('produto/data', catalog_view, name='catalog'),
     path('cart/', cart_view, name='cart'),
     path('api/products/', products_api, name='products_api'),
     path('api/cart/', cart_api, name='cart_api'),

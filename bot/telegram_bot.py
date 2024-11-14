@@ -5,8 +5,8 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, MenuButton
 import json
 from dotenv import load_dotenv
 
-from .adminPanelRequests import showProducts, showCart
-from .cart import add_to_cart, get_cart
+from bot.adminPanelRequests import showProducts, showCart
+from bot.cart import add_to_cart, get_cart
 
 # Carregar variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -23,7 +23,7 @@ def gen_markup_menu():
     markup = InlineKeyboardMarkup()
     markup.row_width = 2
     markup.add(
-        InlineKeyboardButton("Catálogo", web_app=WebAppInfo(url=f"{API_BASE_URL}/catalog/")),
+        InlineKeyboardButton("Catálogo", web_app=WebAppInfo(url=f"{API_BASE_URL}/produto/data")),
         InlineKeyboardButton("Sacola", web_app=WebAppInfo(url=f"{API_BASE_URL}/cart/")),
     )
     return markup
@@ -64,7 +64,7 @@ def gen_markup_confirmation():
     )
     return markup
 
-def gen_markup_catalog_products():
+""" def gen_markup_catalog_products():
     markup = InlineKeyboardMarkup()
     markup.row_width = 2
     products_json = showProducts()
@@ -89,7 +89,7 @@ def callback_query(call):
         if product:
             add_to_cart(user_id, product)
             bot.send_message(user_id, f"{product_name} foi adicionado ao seu carrinho.")
-
+ """
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
     bot.reply_to(message, message.text)
@@ -104,13 +104,14 @@ def format_cart_message(cart_items):
     return message
 
 def start_bot():
+    bot.remove_webhook()
     bot.polling()
 
 def set_webhook():
-    webhook_url = f"https://your-domain.com/bot/telegram-webhook/"
+    webhook_url = f"{API_BASE_URL}/bot/telegram-webhook/"
     bot.remove_webhook()
     bot.set_webhook(url=webhook_url)
 
 if __name__ == "__main__":
-    #set_webhook()
+    set_webhook()
     start_bot()
