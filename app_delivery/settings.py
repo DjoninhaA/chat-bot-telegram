@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'pedido.apps.PedidoConfig',
     'bot.apps.BotConfig',
     'rest_framework',
+    'usuario'
 ]
 
 MIDDLEWARE = [
@@ -133,3 +134,7 @@ STATIC_URL = 'frontend/static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/produto/'  # Para redirecionar para a página inicial após o login
+LOGOUT_REDIRECT_URL = '/'  # Para redirecionar para a página inicial após o logou
