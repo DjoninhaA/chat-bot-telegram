@@ -1,0 +1,54 @@
+<!-- <h2>Login</h2>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Entrar</button>
+</form> -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/frontend/static/CSS/login.css" />
+    <title>Login</title>
+  </head>
+  <body>
+    <div class="geralContainer">
+      <div class="blackContainer">
+        <span style="font-size: 45px; margin-left: 5%; margin-bottom: 3%"
+          >Delivery Bot</span
+        >
+        <span style="font-size: 30px; margin-left: 5%"
+          >Sua loja virtual de forma fácil e eficiente</span
+        >
+      </div>
+      <div class="whiteContainer">
+        <div class="title"><span>Seja bem vindo!</span></div>
+        <form method="post">
+          {% csrf_token %}
+          <div class="divInputs">
+            <input
+              class="inputStyle"
+              id="username:"
+              type="text"
+              name="username"
+              placeholder="username:"
+            />
+            <input
+              class="inputStyle"
+              id="password"
+              type="password"
+              name="password"
+              placeholder="password"
+            />
+            <button class="btnStyle" type="submit">Entrar</button>
+            <a href="/novaSenha"
+              ><span class="forgot">Esqueceu a senha?</span></a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
