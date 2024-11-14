@@ -32,7 +32,7 @@ def catalog_view(request):
     return render(request, 'catalog.html', {'products': products})
 
 def products_api(request):
-    response = requests.get(f'{API_BASE_URL}/products')  # Substitua pela URL da sua API externa
+    response = requests.get(f'{API_BASE_URL}/produtos/data') 
     if response.status_code == 200:
         products = response.json()
         return JsonResponse({"products": products})

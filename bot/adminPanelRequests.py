@@ -15,6 +15,6 @@ def showProducts():
     return products_json
 
 def showCart():
-    response = requests.get(f"{API_BASE_URL}/cart", """ auth=HTTPBasicAuth """)
+    response = requests.get(f"{API_BASE_URL}/cart")
     cart = response.json()
     return cart

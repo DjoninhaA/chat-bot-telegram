@@ -24,7 +24,7 @@ def gen_markup_menu():
     markup.row_width = 2
     markup.add(
         InlineKeyboardButton("Catálogo", web_app=WebAppInfo(url=f"{API_BASE_URL}/produto/data")),
-        InlineKeyboardButton("Sacola", web_app=WebAppInfo(url=f"{API_BASE_URL}/cart/")),
+        InlineKeyboardButton("Sacola", web_app=WebAppInfo(url=f"{API_BASE_URL}/pedido/ver")),
     )
     return markup
 
