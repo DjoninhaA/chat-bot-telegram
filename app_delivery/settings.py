@@ -136,5 +136,8 @@ STATIC_URL = 'frontend/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+
 LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/produto/'  # Para redirecionar para a página inicial após o login
-LOGOUT_REDIRECT_URL = '/'  # Para redirecionar para a página inicial após o logou
+LOGOUT_REDIRECT_URL = 'login'
