@@ -3,16 +3,18 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
 
 import json
 
 from produto.models import Produto, Categoria
 
-
+@login_required
 def get_products(request):
     
     return render(request, 'produtos.html', {'active_page': 'Produtos'})
 
+@login_required
 def produto_detail(request, id=None):
     categorias = Categoria.objects.all().values()
     if id:
@@ -21,6 +23,7 @@ def produto_detail(request, id=None):
         produto = None
     return render(request, 'produtoDetalhes.html', {'active_page': 'Produtos', 'produto': produto, 'categorias': categorias})
 
+@login_required
 def produtos_data(request):
     produtos = Produto.objects.all().values(
         'id', 'nome', 'descricao', 'preco', 'tempoDePreparo', 'subcategoria', 'categoria__nome'
@@ -37,6 +40,7 @@ def produtos_data(request):
 
     return JsonResponse({'produtos': produtosLista, 'totalPages': totalPages, 'currentPage': pageNumber})
 
+@login_required
 @csrf_exempt
 @require_http_methods(['POST'])
 def produto_create(request):
@@ -55,7 +59,7 @@ def produto_create(request):
         return JsonResponse({'error': str(e)}, status=400)
 
 
-
+@login_required
 @csrf_exempt
 @require_http_methods(['DELETE'])
 def produto_detete(request, id):
@@ -65,7 +69,8 @@ def produto_detete(request, id):
         return JsonResponse({'message': 'Produto deletado com sucesso!'})
     except Produto.DoesNotExist:
         return JsonResponse({'message': 'Produto não encontrado!'}, status=404)
-    
+
+@login_required   
 @csrf_exempt
 @require_http_methods(['PUT'])
 def produto_edit(request, id):
@@ -85,6 +90,7 @@ def produto_edit(request, id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+@login_required
 def produto_search(request):
     query = request.GET.get('query', '')
     produtos = Produto.objects.filter(nome__icontains=query).values(
