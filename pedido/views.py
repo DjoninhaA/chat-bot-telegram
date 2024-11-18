@@ -5,8 +5,43 @@ from .models import Pedido, Produto
 from django.views.decorators.csrf import csrf_exempt
 
 # View para renderizar pedidos (exemplo de visualização, se necessário)
-def get_order(request):
-    return render(request, 'pedidos.html')
+def get_status_string(status_code):
+    status_mapping = {
+        0: "Pendente",
+        1: "Em andamento",
+        2: "Concluído",
+        # Adicione outros status se necessário
+    }
+    return status_mapping.get(status_code, "Desconhecido")
+
+@csrf_exempt
+def listar_pedidos(request):
+    if request.method == 'GET':
+        try:
+            # Buscar todos os pedidos
+            pedidos = Pedido.objects.all()
+            
+            # Transformar os pedidos em um formato que possa ser retornado como JSON
+            pedidos_data = []
+            for pedido in pedidos:
+                pedidos_data.append({
+                    'id': pedido.id,
+                    'status': get_status_string(pedido.status),
+                    'valor': pedido.valor,
+                    'cliente': pedido.cliente,
+                   'produtos': [{
+                        'id': produto.id,
+                        'nome': produto.nome  # Adicionando o nome do produto
+                    } for produto in pedido.produto.all()],
+                })
+
+            # Retornar os pedidos como JSON
+            return JsonResponse({'pedidos': pedidos_data}, status=200)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
 
 @csrf_exempt
 def pedido_create(request):
@@ -47,3 +82,16 @@ def pedido_create(request):
 
     return JsonResponse({'error': 'Método não permitido'}, status=405)
     
+@csrf_exempt
+def deletar_pedido(request, pedido_id):
+    if request.method == 'DELETE':
+        try:
+
+            pedido = Pedido.objects.get(id=pedido_id)
+            pedido.delete()
+            return JsonResponse({'message': f'Pedido com ID {pedido_id} deletado com sucesso.'}, status=200)
+
+        except Pedido.DoesNotExist:
+            return JsonResponse({'error': f'Pedido com ID {pedido_id} não encontrado.'}, status=404)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
