@@ -23,22 +23,13 @@ def produto_detail(request, id=None):
         produto = None
     return render(request, 'produtoDetalhes.html', {'active_page': 'Produtos', 'produto': produto, 'categorias': categorias})
 
-@login_required
+#@login_required
 def produtos_data(request):
     produtos = Produto.objects.all().values(
         'id', 'nome', 'descricao', 'preco', 'tempoDePreparo', 'subcategoria', 'categoria__nome'
     )
-    
-    pageNumber = int(request.GET.get('page', 1))
-    pageSize = 10
-    startIndex = (pageNumber - 1) * pageSize
-    endIndex = pageNumber + pageSize
-
-    produtosLista = list(produtos[startIndex:endIndex])
-
-    totalPages = (len(produtos) + pageSize -1 ) // pageSize
-
-    return JsonResponse({'produtos': produtosLista, 'totalPages': totalPages, 'currentPage': pageNumber})
+    produtos_lista = list(produtos)
+    return JsonResponse({"produtos": produtos_lista})
 
 @login_required
 @csrf_exempt
