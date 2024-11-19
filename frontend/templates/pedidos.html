@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/frontend/static/CSS/geral.css">
+    <link rel="stylesheet" href="/frontend/static/CSS/sidebar.css">
+    <link rel="stylesheet" href="/frontend/static/CSS/produtos.css">
+    <title>Produtos</title>
+</head>
+<body>
+    <div class="geralContainer">
+        {% include 'sidebar.html' %}
+        <div class="divContainer">
+            <div class="divTitle"><span class="title">Lista de Pedidos</span></div>
+            <div class="searchContainer">
+                <div class="divSearch">
+                    <img class="searchImg" src="{% static '/images/Search.png' %}" alt="Pesquisar">
+                    <input type="text" class="inputSearch" id="searchValue" placeholder="Pesquisar" autocomplete="off">
+                </div>
+                <button class="addProd"">Adicionar Pedidos</button>
+            </div>
+            <div class="divTable">
+                <table class="prodTable">
+                    <tr>
+                        <th class="thStyle" id="thCheckbox"><input type="checkbox" name="checkbox" value="all" class="checkboxStyle"></td>
+                        <th class="thStyle" id="thFoto">Foto</td>
+                        <th class="thStyle" id="thNome">Nome <span id="arrowName" class="arrowsFilter">⇅</span> </td>
+                        <th class="thStyle" id="thCate">Categoria <span id="arrowCate" class="arrowsFilter">⇅</span> </td>
+                        <th class="thStyle" id="thPreco">Preço <span id="arrowPrice" class="arrowsFilter">⇅</span> </td>
+                        <th class="thStyle" id="thImages"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="divBtnFooter">
+                <span class="styleFooter disabledArrows" id="priorBtn"><</span>
+                <span class="totalPages">1</span>
+                <span class="styleFooter" id="nextBtn">></span>
+            </div>
+        </div>
+    </div>
+    <div id="overlay"></div>
+    <div id="modalDelete">
+        <p id="deleteMsg"></p>
+        <div class="divBtns">
+            <button class="styleBtn" id="cancelDelete">Cancelar</button>
+            <button class="styleBtn" id="confirmDelete">Deletar</button>
+        </div>
+    </div>
+    <script>
+        const activeElement = document.getElementById("{{ active_page }}").classList.add("selected");
+        const imagePaths = {
+            edit: '{% static "images/edit.png" %}',
+            delete: '{% static "images/delete.png" %}',
+            placeholder: '{% static "images/placeholder.png" %}'
+        };
+    </script>
+    <script src="{% static 'pedidos.js' %}"></script>
+    <script src="{% static 'toastAlert.js' %}"></script>
+</body>
+</html>
