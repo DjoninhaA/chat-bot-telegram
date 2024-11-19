@@ -25,46 +25,45 @@
 </head>
 <body>
     <h1>Catálogo de Produtos</h1>
-    <div class="category-menu" id="category-menu"></div>
-    <div id="products"></div>
+    <div class="category-menu" id="category-menu">
+        {% for category in products.produtos|dictsort:"categoria__nome" %}
+            <button onclick="loadProducts('{{ category.0 }}')">{{ category.0 }}</button>
+        {% endfor %}
+    </div>
+    <div id="products">
+        {% for product in products.produtos %}
+            <div class="product">
+                <h2>{{ product.nome }}</h2>
+                <p>{{ product.descricao }}</p>
+                <p>Preço: {{ product.preco }}</p>
+                <p>Tempo de Preparo: {{ product.tempoDePreparo }} minutos</p>
+                <p>Subcategoria: {{ product.subcategoria }}</p>
+                <p>Categoria: {{ product.categoria__nome }}</p>
+                <button onclick="addToCart('{{ product.nome }}')">Adicionar ao Carrinho</button>
+            </div>
+        {% endfor %}
+    </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('/api/products/')
-                .then(response => response.json())
-                .then(data => {
-                    const categoryMenu = document.getElementById('category-menu');
-                    const productsDiv = document.getElementById('products');
+        const allProducts = JSON.parse(document.getElementById('products-data').textContent);
 
-                    data.categories.forEach(category => {
-                        const button = document.createElement('button');
-                        button.innerText = category;
-                        button.onclick = () => loadProducts(category);
-                        categoryMenu.appendChild(button);
-                    });
-
-                    function loadProducts(category) {
-                        productsDiv.innerHTML = '';
-                        data.products[category].forEach(product => {
-                            const productDiv = document.createElement('div');
-                            productDiv.className = 'product';
-                            productDiv.innerHTML = `
-                                <img src="${product.image}" alt="${product.name}">
-                                <h2>${product.name}</h2>
-                                <p>${product.description}</p>
-                                <p>Preço: ${product.price}</p>
-                                <p>Quantidade: ${product.quantity}</p>
-                                <button onclick="addToCart('${product.name}')">Adicionar ao Carrinho</button>
-                            `;
-                            productsDiv.appendChild(productDiv);
-                        });
-                    }
-
-                    // Load products for the first category by default
-                    if (data.categories.length > 0) {
-                        loadProducts(data.categories[0]);
-                    }
-                });
-        });
+        function loadProducts(category) {
+            const productsDiv = document.getElementById('products');
+            productsDiv.innerHTML = '';
+            allProducts.produtos.filter(product => product.categoria__nome === category).forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+                productDiv.innerHTML = `
+                    <h2>${product.nome}</h2>
+                    <p>${product.descricao}</p>
+                    <p>Preço: ${product.preco}</p>
+                    <p>Tempo de Preparo: ${product.tempoDePreparo} minutos</p>
+                    <p>Subcategoria: ${product.subcategoria}</p>
+                    <p>Categoria: ${product.categoria__nome}</p>
+                    <button onclick="addToCart('${product.nome}')">Adicionar ao Carrinho</button>
+                `;
+                productsDiv.appendChild(productDiv);
+            });
+        }
 
         function addToCart(productName) {
             fetch('/api/add_to_cart/', {
@@ -80,5 +79,6 @@
               });
         }
     </script>
+    <script id="products-data" type="application/json">{{ products|json_script:"products-data" }}</script>
 </body>
 </html>

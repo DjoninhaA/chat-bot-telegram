@@ -3,38 +3,42 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.conf import settings
-import telebot
-from .telegram_bot import bot
 from django.shortcuts import render
 import json
 from dotenv import load_dotenv
+from .adminPanelRequests import showProducts
+from telegram_menu import TelegramMenuSession
+from produto.models import Produto
 
 # Carregar variáveis de ambiente do arquivo .env
 load_dotenv()
+API_KEY = os.getenv('BOT_TOKEN')
 API_BASE_URL = os.getenv('API_BASE_URL')
 
-# Simulação de um banco de dados em memória para o carrinho
-cart_db = {}
+# Inicializar a sessão do TelegramMenu
+menu_session = TelegramMenuSession(API_KEY)
 
 @csrf_exempt
 def telegram_webhook(request):
     if request.method == "POST":
         json_str = request.body.decode('UTF-8')
-        update = telebot.types.Update.de_json(json_str)
-        bot.process_new_updates([update])
+        update = json.loads(json_str)
+        menu_session.handle_update(update)
         return JsonResponse({"status": "ok"})
     return JsonResponse({"status": "error"}, status=400)
 
 def catalog_view(request):
-    return render(request, 'catalog.html')
+    products_json = showProducts()
+    products = json.loads(products_json)
+    return render(request, 'catalog.html', {'products': products})
 
 def products_api(request):
-    response = requests.get(f'{API_BASE_URL}/products')  # Substitua pela URL da sua API externa
+    response = requests.get(f'{API_BASE_URL}/produto/data/')
     if response.status_code == 200:
         products = response.json()
         return JsonResponse({"products": products})
     else:
-        return JsonResponse({"error": "Não foi possível obter os produtos"}, status=response.status_code)
+        return JsonResponse({"error": "Unable to fetch products"}, status=response.status_code)
 
 @csrf_exempt
 def add_to_cart_api(request):
@@ -72,6 +76,13 @@ def finalize_order_api(request):
         # Adicione a lógica para finalizar o pedido
         return JsonResponse({"message": "Pedido finalizado com sucesso"})
     return JsonResponse({"message": "Método não permitido"}, status=405)
+
+def produtos_data(request):
+    produtos = Produto.objects.all().values(
+        'id', 'nome', 'descricao', 'preco', 'tempoDePreparo', 'subcategoria', 'categoria__nome'
+    )
+    produtos_lista = list(produtos)
+    return JsonResponse({"produtos": produtos_lista})
 
 """ from django.shortcuts import render
 from rest_framework.response import Response

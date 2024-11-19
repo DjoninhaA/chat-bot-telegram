@@ -24,7 +24,7 @@ def produto_detail(request, id=None):
         produto = None
     return render(request, 'produtoDetalhes.html', {'active_page': 'Produtos', 'produto': produto, 'categorias': categorias})
 
-@login_required
+#@login_required
 def produtos_data(request):
     produtos = Produto.objects.all().values(
         'id', 'nome', 'descricao', 'preco', 'categoria__nome', 'imagem'

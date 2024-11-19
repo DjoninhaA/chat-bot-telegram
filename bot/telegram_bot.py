@@ -1,116 +1,167 @@
 import os
-import telebot
-from telebot.util import quick_markup
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, MenuButtonWebApp, WebAppInfo
 import json
+import requests
 from dotenv import load_dotenv
+from telegram_menu import BaseMessage, TelegramMenuSession, NavigationHandler
 
-from .adminPanelRequests import showProducts, showCart
-from .cart import add_to_cart, get_cart
-
-# Carregar variáveis de ambiente do arquivo .env
 load_dotenv()
-botToken = os.getenv('BOT_TOKEN')
+API_KEY = os.getenv('BOT_TOKEN')
 API_BASE_URL = os.getenv('API_BASE_URL')
 
-bot = telebot.TeleBot(botToken)
+USER_NAME = ""
+ID_PRODUTOS_PEDIDO = []
 
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.send_message(message.chat.id, '<b>Bem vindo ao nosso restaurante!</b>', parse_mode='HTML', reply_markup=gen_markup_menu())
+class StartMessage(BaseMessage):
+    LABEL = "start"
 
-def gen_markup_menu():
-    markup = InlineKeyboardMarkup()
-    markup.row_width = 2
-    markup.add(
-        InlineKeyboardButton("Catálogo", web_app=WebAppInfo(url=f"{API_BASE_URL}/catalog/")),
-        InlineKeyboardButton("Sacola", web_app=WebAppInfo(url=f"{API_BASE_URL}/cart/")),
-    )
-    return markup
+    def __init__(self, navigation: NavigationHandler) -> None:
+        super().__init__(navigation, StartMessage.LABEL)
 
-def gen_markup_cart():
-    markup = InlineKeyboardMarkup()
-    markup.row_width = 2
-    markup.add(
-        InlineKeyboardButton("Finalizar Compra", callback_data="/checkout"),
-        InlineKeyboardButton("Voltar ao Catálogo", callback_data="/catalog"),
-    )
-    return markup
+    def update(self, navigation) -> str:
+        welcomeMessage = "Bem-vindo ao nosso cardápio!"
+        global USER_NAME
+        USER_NAME = self.navigation.user_name
+        category_message = CategoryMessage(navigation, "Categorias")
+        self.add_button(label="Categorias", callback=category_message)
+        return welcomeMessage
 
-def gen_markup_checkout():
-    markup = InlineKeyboardMarkup()
-    markup.row_width = 2
-    markup.add(
-        InlineKeyboardButton("Pagar", callback_data="/pay"),
-        InlineKeyboardButton("Cancelar", callback_data="/cancel"),
-    )
-    return markup
+class CategoryMessage(BaseMessage):
+    LABEL = "Categorias"
 
-def gen_markup_payment():
-    markup = InlineKeyboardMarkup()
-    markup.row_width = 2
-    markup.add(
-        InlineKeyboardButton("Cartão de Crédito", callback_data="/credit_card"),
-        InlineKeyboardButton("Boleto", callback_data="/boleto"),
-    )
-    return markup
+    def __init__(self, navigation: NavigationHandler, category: str) -> None:
+        super().__init__(navigation, CategoryMessage.LABEL)
+        self.category = category
 
-def gen_markup_confirmation():
-    markup = InlineKeyboardMarkup()
-    markup.row_width = 2
-    markup.add(
-        InlineKeyboardButton("Confirmar", callback_data="/confirm"),
-        InlineKeyboardButton("Cancelar", callback_data="/cancel"),
-    )
-    return markup
+    def update(self) -> str:
+        print(f"update called for category: {self.category}")  # Log para depuração
+        url = f"{API_BASE_URL}/produto/data/"
+        print(f"Requesting URL: {url}")  # Log para depuração
+        response = requests.get(url)
+        try:
+            products = response.json().get('produtos', [])
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}")  # Log para depuração
+            products = []
+        categories = set(product['categoria__nome'] for product in products)
+        for category in categories:
+            self.add_button(label=category, callback=ProductMessage(self.navigation, category=category))
+        return f"Produtos na categoria {self.category}:\n\n"
 
-def gen_markup_catalog_products():
-    markup = InlineKeyboardMarkup()
-    markup.row_width = 2
-    products_json = showProducts()
-    for product in json.loads(products_json)["products"]:
-        markup.add(InlineKeyboardButton(product["name"], callback_data=f"/add_{product['name']}"))
-    return markup
+    def get_keyboard(self):
+        print(f"get_keyboard called for category: {self.category}")  # Log para depuração
+        return [{"text": "Voltar", "callback_data": "start"}]
 
-@bot.callback_query_handler(func=lambda call: True)
-def callback_query(call):
-    user_id = call.message.chat.id
-    if call.data == "/catalog":
-        bot.send_message(user_id, '<b>Catálogo:</b>', parse_mode='HTML', reply_markup=gen_markup_catalog_products())
-    elif call.data == "/cart":
-        cart_items = get_cart(user_id)
-        formatted_message = format_cart_message(cart_items)
-        bot.send_message(user_id, formatted_message, parse_mode='HTML')
-    elif call.data.startswith("/add_"):
-        product_name = call.data.split("_")[1]
-        products_json = showProducts()
-        products = json.loads(products_json)["products"]
-        product = next((p for p in products if p["name"] == product_name), None)
+class ProductMessage(BaseMessage):
+    LABEL = "product"
+
+    def __init__(self, navigation: NavigationHandler, product_name: str = None, category: str = None) -> None:
+        super().__init__(navigation, ProductMessage.LABEL)
+        self.product_name = product_name
+        self.category = category
+
+    def update(self) -> str:
+        if self.product_name:
+            return self.get_product_details()
+        else:
+            return self.get_category_products()
+
+    def get_category_products(self) -> str:
+        print(f"update called for category: {self.category}")  # Log para depuração
+        url = f"{API_BASE_URL}/produto/data/"
+        print(f"Requesting URL: {url}")  # Log para depuração
+        response = requests.get(url)
+        print(f"Response status code: {response.status_code}")  # Log para depuração
+        print(f"Response content: {response.content}")  # Log para depuração
+        try:
+            products = response.json().get('produtos', [])
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}")  # Log para depuração
+            products = []
+        message = f"Produtos na categoria {self.category}:\n\n"
+        category_products = [product for product in products if product['categoria__nome'] == self.category]
+        for product in category_products:
+            self.add_button(label=product['nome'], callback=ProductMessage(self.navigation, product_name=product['nome']))
+        return message
+
+    def get_product_details(self) -> str:
+        print(f"update called for product: {self.product_name}")  # Log para depuração
+        url = f"{API_BASE_URL}/produto/data/"
+        print(f"Requesting URL: {url}")  # Log para depuração
+        response = requests.get(url)
+        print(f"Response status code: {response.status_code}")  # Log para depuração
+        print(f"Response content: {response.content}")  # Log para depuração
+        try:
+            products = response.json().get('produtos', [])
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {e}")  # Log para depuração
+            products = []
+        
+        product = next((p for p in products if p['nome'] == self.product_name), None)
         if product:
-            add_to_cart(user_id, product)
-            bot.send_message(user_id, f"{product_name} foi adicionado ao seu carrinho.")
+            message = (
+                f"Detalhes do Produto:\n\n"
+                f"Nome: {product['nome']}\n"
+                f"Descrição: {product['descricao']}\n"
+                f"Preço: R$ {product['preco']}\n"
+                #f"Tempo de Preparo: {product['tempoDePreparo']} minutos\n"
+                #f"Subcategoria: {product['subcategoria']}\n"
+                f"Categoria: {product['categoria__nome']}\n\n"
+            )
+            self.add_button(label="Adicionar ao Carrinho", callback=AddToCartMessage(self.navigation, [self.product_name]))
+            return message
+        else:
+            return f"Produto {self.product_name} não encontrado."
 
-@bot.message_handler(func=lambda message: True)
-def echo_all(message):
-    bot.reply_to(message, message.text)
+    def get_keyboard(self):
+        print(f"get_keyboard called for category: {self.category}")  # Log para depuração
+        return [{"text": "Voltar", "callback_data": "start"}]
 
-def format_cart_message(cart_items):
-    if not cart_items:
-        return "Seu carrinho está vazio."
-    message = "<b>Seu Carrinho:</b>\n"
-    for item in cart_items:
-        message += f"\n<b>{item['name']}</b>\n"
-        message += f"Preço: {item['price']}\n"
-    return message
+class AddToCartMessage(BaseMessage):
+    LABEL = "add_to_cart"
+
+    def __init__(self, navigation: NavigationHandler, product_names: list) -> None:
+        super().__init__(navigation, AddToCartMessage.LABEL)
+        self.product_names = product_names
+        print(f"Nome: {USER_NAME}")  # Log para depuração
+
+    def update(self) -> str:
+        urlPostPedido = f"{API_BASE_URL}/pedido/criar/"
+        
+        # Obter os IDs dos produtos a partir dos nomes dos produtos
+        global ID_PRODUTOS_PEDIDO
+        ID_PRODUTOS_PEDIDO = [self.get_product_id_by_name(product_name) for product_name in self.product_names]
+
+        payload = {
+            "produtos_ids": ID_PRODUTOS_PEDIDO, 
+            "status": 0,
+            "cliente": USER_NAME,  # Usar o nome da conversa
+            "quantidade": 1  # Você pode ajustar a quantidade conforme necessário
+        }
+        headers = {
+            "Content-Type": "application/json"
+        }
+        response = requests.post(urlPostPedido, json=payload, headers=headers)
+        
+        if response.status_code == 201:
+            return f"Produtos {', '.join(self.product_names)} adicionados ao carrinho com sucesso!"
+        else:
+            print(f"Erro: {response.content}, status code: {response.status_code}")
+            return f"Erro ao adicionar os produtos ao carrinho."
+
+    def get_product_id_by_name(self, product_name: str) -> int:
+        url = f"{API_BASE_URL}/produto/data/"
+        response = requests.get(url)
+        if response.status_code == 200:
+            products = response.json().get('produtos', [])
+            for product in products:
+                if product['nome'] == product_name:
+                    return product['id']
+        return None
 
 def start_bot():
-    bot.polling()
-
-def set_webhook():
-    webhook_url = f"https://your-domain.com/bot/telegram-webhook/"
-    bot.remove_webhook()
-    bot.set_webhook(url=webhook_url)
+    print("Starting bot...")  # Log para depuração
+    menu_session = TelegramMenuSession(API_KEY)
+    menu_session.start(StartMessage)
 
 if __name__ == "__main__":
-    #set_webhook()
     start_bot()
