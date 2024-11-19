@@ -140,9 +140,40 @@ class AddToCartMessage(BaseMessage):
         self.product_name = product_name
 
     def update(self) -> str:
-        # Lógica para adicionar o produto ao carrinho
-        # Aqui você pode fazer uma chamada para a API para adicionar o produto ao carrinho
-        return f"Produto {self.product_name} adicionado ao carrinho com sucesso!"
+        urlPostPedido = f"{API_BASE_URL}/pedido/ver/"
+        
+        # Obter o ID do produto a partir do nome do produto
+        product_id = self.get_product_id_by_name(self.product_name)
+        
+        if product_id is None:
+            return f"Erro: Produto {self.product_name} não encontrado."
+
+        payload = {
+            "produtos_ids": [product_id],
+            "status": 0,
+            "cliente": "Nome do Cliente",  # Ajuste conforme necessário
+            "quantidade": 1  # Você pode ajustar a quantidade conforme necessário
+        }
+        headers = {
+            "Content-Type": "application/json"
+        }
+        response = requests.post(urlPostPedido, json=payload, headers=headers)
+        
+        if response.status_code == 201:
+            return f"Produto {self.product_name} adicionado ao carrinho com sucesso!"
+        else:
+            print(f"Erro: {response.content}, status code: {response.status_code}")
+            return f"Erro ao adicionar o produto {self.product_name} ao carrinho. \n Erro: {response.content}"
+
+    def get_product_id_by_name(self, product_name: str) -> int:
+        url = f"{API_BASE_URL}/produto/data/"
+        response = requests.get(url)
+        if response.status_code == 200:
+            products = response.json().get('produtos', [])
+            for product in products:
+                if product['nome'] == product_name:
+                    return product['id']
+        return None
 
     def get_keyboard(self):
         return [{"text": "Voltar", "callback_data": "start"}]
