@@ -1,59 +1,77 @@
-html, body {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins';
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins";
 }
 
 .sidebar {
-    display: flex;
-    z-index: 1;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 18%;
-    color: var(--white);
-    background-color: var(--blue-dark);
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
+  display: flex;
+  z-index: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 18%;
+  color: var(--white);
+  background-color: var(--blue-dark);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.divListSideBar.sidebarLink {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
 }
 
 .upperContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    height: 60%;
-    margin-top: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 60%;
+  margin-top: 10%;
 }
 
-.divListSideBar{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: start;
-    width: 80%;
-    height: 10%;
-    cursor: pointer;
+.divListSideBar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  width: 80%;
+  height: 10%;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .spacing {
-    margin-left: 5%;
+  margin-left: 5%;
 }
 
 .logoutContainer {
-    display: flex;;
-    align-items: center;
-    justify-content: flex-start;
-    width: 90%;
-    height: 6%;
-    border-radius: 8px;
-    margin-left: 4%;
-    margin-bottom: 10%;
-    background-color: var(--gray-dark);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 90%;
+  height: 6%;
+  border-radius: 8px;
+  margin-left: 4%;
+  margin-bottom: 10%;
+  background-color: var(--gray-dark);
 }
 
 .selected {
-    background-color: var(--gray-dark);   
+  background-color: var(--gray-dark);
+}
+
+a:visited {
+  color: white;
+}
+
+.a:hover {
+  background-color: yellow;
 }

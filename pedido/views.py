@@ -14,6 +14,10 @@ def get_status_string(status_code):
     }
     return status_mapping.get(status_code, "Desconhecido")
 
+def renderizar(request):
+    if request.method =="GET":
+        return(request, 'pedido.html')
+
 @csrf_exempt
 def listar_pedidos(request):
     if request.method == 'GET':
