@@ -103,8 +103,8 @@ class ProductMessage(BaseMessage):
                 f"Nome: {product['nome']}\n"
                 f"Descrição: {product['descricao']}\n"
                 f"Preço: R$ {product['preco']}\n"
-                f"Tempo de Preparo: {product['tempoDePreparo']} minutos\n"
-                f"Subcategoria: {product['subcategoria']}\n"
+                #f"Tempo de Preparo: {product['tempoDePreparo']} minutos\n"
+                #f"Subcategoria: {product['subcategoria']}\n"
                 f"Categoria: {product['categoria__nome']}\n\n"
             )
             self.add_button(label="Adicionar ao Carrinho", callback=AddToCartMessage(self.navigation, [self.product_name]))
@@ -132,7 +132,7 @@ class AddToCartMessage(BaseMessage):
         ID_PRODUTOS_PEDIDO = [self.get_product_id_by_name(product_name) for product_name in self.product_names]
 
         payload = {
-            "produtos_ids": [ID_PRODUTOS_PEDIDO], 
+            "produtos_ids": ID_PRODUTOS_PEDIDO, 
             "status": 0,
             "cliente": USER_NAME,  # Usar o nome da conversa
             "quantidade": 1  # Você pode ajustar a quantidade conforme necessário
