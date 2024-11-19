@@ -92,6 +92,8 @@ DATABASES = {
     }
 }
 
+media_root = os.path.join(BASE_DIR, 'media')
+media_url = '/media/'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

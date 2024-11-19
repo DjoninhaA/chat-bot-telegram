@@ -14,10 +14,28 @@ document.getElementById('btnCategoria').addEventListener('click', () => {
     document.querySelector('.modalCategoria').style.display = 'flex';
 });
 
-if(addBtn) {
+document.getElementById('addImg').addEventListener('click', () => {
+    document.getElementById('imagemInput').click();
+});
+
+document.getElementById('imagemInput').addEventListener('change', () => {
+    const file = document.getElementById('imagemInput').files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+        document.querySelector('.imgProduto').src = reader.result;
+    }
+
+    if(file) {
+        reader.readAsDataURL(file);
+    }
+});
+
+if (addBtn) {
     addBtn.addEventListener('click', () => {
         const urlAdd = '/produto/criar/';
 
+        const imagem = document.getElementById('imagemInput').files[0];
         const nome = document.getElementById('nome').value;
         const descricao = document.getElementById('descricao').value;
         const categoria = document.getElementById('categoria').value;
@@ -25,34 +43,36 @@ if(addBtn) {
         const preco = document.getElementById('preco').value;
         const tempoDePreparo = document.getElementById('tempo').value;
 
-        if(!nome || !descricao || !categoria || !subcategoria || !preco || !tempoDePreparo) {
-            toastAlert('warn','Preencha todos os campos!');
+        console.log(imagem)
+
+        if (!nome || !descricao || !categoria || !subcategoria || !preco || !tempoDePreparo) {
+            toastAlert('warn', 'Preencha todos os campos!');
             return;
         }
 
+        const formData = new FormData();
+        formData.append('imagem', imagem);
+        formData.append('nome', nome);
+        formData.append('descricao', descricao);
+        formData.append('categoria', categoria);
+        formData.append('subcategoria', subcategoria);
+        formData.append('preco', preco);
+        formData.append('tempoDePreparo', tempoDePreparo);
+
         fetch(urlAdd, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                nome,
-                descricao,
-                categoria,
-                subcategoria,
-                preco,
-                tempoDePreparo
-            })
+            body: formData,
         })
         .then(response => response.json())
         .then(data => {
-            if(data.message) {
+            if (data.message) {
                 toastAlert('success', 'Produto cadastrado com sucesso!');
                 document.getElementById('nome').value = '';
                 document.getElementById('descricao').value = '';
                 document.getElementById('subCategoria').value = '';
                 document.getElementById('preco').value = '';
                 document.getElementById('tempo').value = '';
+                document.getElementById('imagemInput').value = '';
             } else {
                 console.error(data);
                 toastAlert('error', data.error);
@@ -69,6 +89,7 @@ if(editBtn) {
     editBtn.addEventListener('click', () => {
         const urlEdit = `/produto/editar/${currentId}`;
 
+        const imagem = document.getElementById('imagemInput').files[0];
         const nome = document.getElementById('nome').value;
         const descricao = document.getElementById('descricao').value;
         const categoria = document.getElementById('categoria').value;
@@ -87,6 +108,7 @@ if(editBtn) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                imagem,
                 nome,
                 descricao,
                 categoria,
@@ -112,11 +134,11 @@ if(editBtn) {
 }
 
 document.getElementById('addCategoria').addEventListener('click', () => {
-    const urlAddCategoria = '/categoria/criar';
+    const urlAddCategoria = '/produto/categoria/criar/';
 
     const nome = document.getElementById('cadCategoria').value;
 
-    if(!categoria) {
+    if(!nome) {
         toastAlert('warn','Preencha o campo!');
         return;
     }
@@ -126,16 +148,17 @@ document.getElementById('addCategoria').addEventListener('click', () => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(nome)
+        body: JSON.stringify({nome})
     })
     .then(response => response.json())
     .then(data => {
-        if(data.message) {
+        if(data.success) {
             toastAlert('success', 'Categoria cadastrada com sucesso!');
             overlay.style.display = 'none';
             document.querySelector('.modalCategoria').style.display = 'none';
             document.getElementById('cadCategoria').value = '';
-            document.getElementById('categoria').innerHTML += `<option value="${categoria}">${categoria}</option>`;
+            document.getElementById('categoria').innerHTML += `<option value="${data.categoriaId}">${data.categoriaNome}</option>`;
+            document.getElementById('categoria').value = data.categoriaId;
         } else {
             console.error(data);
             toastAlert('error', data.error);

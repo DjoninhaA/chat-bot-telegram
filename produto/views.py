@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
@@ -23,38 +24,60 @@ def produto_detail(request, id=None):
 
 def produtos_data(request):
     produtos = Produto.objects.all().values(
-        'id', 'nome', 'descricao', 'preco', 'tempoDePreparo', 'subcategoria', 'categoria__nome'
+        'id', 'nome', 'descricao', 'preco', 'categoria__nome', 'imagem'
     )
-    
-    pageNumber = int(request.GET.get('page', 1))
-    pageSize = 10
-    startIndex = (pageNumber - 1) * pageSize
-    endIndex = pageNumber + pageSize
 
-    produtosLista = list(produtos[startIndex:endIndex])
+    produtos_lista = []
+    for produto in produtos:
+        produto['imagem'] = request.build_absolute_uri(settings.MEDIA_URL + produto['imagem'])
+        produtos_lista.append(produto)
 
-    totalPages = (len(produtos) + pageSize -1 ) // pageSize
+    page_number = int(request.GET.get('page', 1))
+    page_size = 10
+    start_index = (page_number - 1) * page_size
+    end_index = start_index + page_size
 
-    return JsonResponse({'produtos': produtosLista, 'totalPages': totalPages, 'currentPage': pageNumber})
+    total_pages = (len(produtos_lista) + page_size - 1) // page_size
+    return JsonResponse({'produtos': produtos_lista[start_index:end_index], 'totalPages': total_pages, 'currentPage': page_number})
 
 @csrf_exempt
 @require_http_methods(['POST'])
 def produto_create(request):
     try:
-        data = json.loads(request.body)
+        imagem = request.FILES.get('imagem')
+        print(imagem)
+        nome = request.POST.get('nome')
+        descricao = request.POST.get('descricao')
+        preco = request.POST.get('preco')
+        categoria_id = request.POST.get('categoria')
+        subcategoria = request.POST.get('subcategoria')
+        tempoDePreparo = request.POST.get('tempoDePreparo')
+
         produto = Produto.objects.create(
-            nome=data['nome'],
-            descricao=data['descricao'],
-            preco=data['preco'],
-            categoria_id=data['categoria'],
-            subcategoria=data['subcategoria'],
-            tempoDePreparo=data['tempoDePreparo'],
+            nome=nome,
+            descricao=descricao,
+            preco=preco,
+            categoria_id=categoria_id,
+            subcategoria=subcategoria,
+            tempoDePreparo=tempoDePreparo,
+            imagem=imagem
         )
         return JsonResponse({'message': 'Produto criado com sucesso!'})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+@csrf_exempt
+@require_http_methods(['POST'])
+def categoria_create(request):
+    try:
+        data = json.loads(request.body)
+        categoria = Categoria.objects.create(
+            nome=data['nome'],
+        )
 
+        return JsonResponse({'message': 'Categoria criada com sucesso!', 'success':'true', 'categoriaNome': categoria.nome, 'categoriaId': categoria.id})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
 @csrf_exempt
 @require_http_methods(['DELETE'])
