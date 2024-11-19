@@ -1,14 +1,10 @@
 {% load static %}
 <div class="sidebar">
   <div class="upperContainer">
-    <div class="divListSideBar" id="Pedidos">
-      <img
-        src="{% static 'images/Pedidos.png' %}"
-        class="spacing"
-        alt="Pedidos"
-      />
+    <a href="{% url 'pedidos' %}" class="divListSideBar">
+      <img src="{% static 'images/Pedidos.png' %}" class="spacing" alt="" />
       <span class="spacing">Pedidos</span>
-    </div>
+    </a>
     <div class="divListSideBar" id="Categorias">
       <img
         src="{% static 'images/Categorias.png' %}"
@@ -59,13 +55,8 @@
     </div>
   </div>
   <div class="logoutContainer">
-    <!-- Usando um link para redirecionar para a URL de logout -->
-    <a href="{% url 'logout' %}" class="logoutLink">
-      <img
-        src="{% static 'images/Logout.png' %}"
-        class="spacing"
-        alt="logout"
-      />
+    <a href="{% url 'logout' %}" class="divListSideBar">
+      <img src="{% static 'images/Logout.png' %}" class="spacing" alt="" />
       <span class="spacing">Logout</span>
     </a>
   </div>
