@@ -12,3 +12,4 @@ sqlparse==0.5.1
 telebot==0.0.5
 tzdata==2024.2
 urllib3==2.2.3
+python-dotenv==1.0.1

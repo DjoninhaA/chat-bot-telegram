@@ -1,0 +1,81 @@
+<!-- <h2>Cadastro</h2>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Registrar</button>
+</form> -->
+
+<!-- <h2>Login</h2>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">Entrar</button>
+</form> -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/frontend/static/CSS/login.css" />
+    <title>Register</title>
+  </head>
+  <body>
+    <div class="geralContainer">
+      <div class="blackContainer">
+        <span style="font-size: 45px; margin-left: 5%; margin-bottom: 3%"
+          >Delivery Bot</span
+        >
+        <span style="font-size: 30px; margin-left: 5%"
+          >Sua loja virtual de forma fácil e eficiente</span
+        >
+      </div>
+      <div class="whiteContainer">
+        <div class="title"><span>Faça Seu Cadastro!</span></div>
+
+        <!-- Bloco de Mensagens de Sucesso ou Erro -->
+        {% if messages %}
+        <div class="alert alert-info" role="alert">
+          {% for message in messages %}
+          <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="divInputs">
+            <input
+              class="inputStyle"
+              id="username"
+              type="text"
+              name="username"
+              placeholder="Username:"
+            />
+            <input
+              class="inputStyle"
+              id="id_email"
+              type="email"
+              name="email"
+              placeholder="Email:"
+            />
+            <input
+              class="inputStyle"
+              id="password1"
+              type="password"
+              name="password1"
+              placeholder="Senha"
+            />
+            <input
+              class="inputStyle"
+              id="password2"
+              type="password"
+              name="password2"
+              placeholder="Confirmar Senha"
+            />
+            <button class="btnStyle" type="submit">Cadastrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
