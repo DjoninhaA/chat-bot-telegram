@@ -108,6 +108,13 @@ main {
     align-items: center;
 }
 
+.browse {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
 .add, .browse {
     display: flex;
     align-items: center;
@@ -125,13 +132,30 @@ input, button, select {
 }
 
 .add select, .browse input, .browse select {
-    height: 35px;
+    height: 50px;
     border: 1px solid #b0b0b0;
     border-radius: 3px;
     display: inline-block;
     width: 75px;
     padding: 0rem .5rem;
     margin-right: .8rem;
+    color: #666;
+}
+
+.browse .search-icon {
+    position: absolute; 
+    left: 10px; 
+    font-size: 16px; 
+    color: #666; 
+}
+
+.browse input {
+    width: 150px; 
+    height: 50px; 
+    padding: 0 10px 0 30px;
+    border: 1px solid #b0b0b0;
+    border-radius: 3px;
+    font-size: 14px; 
     color: #666;
 }
 
@@ -146,7 +170,7 @@ input, button, select {
 }
 
 .browse input {
-    width: 150px;
+    width: 550px;
 }
 
 .browse select {
@@ -171,6 +195,12 @@ table thead th {
     text-align: left;
     color: #444;
     font-size: .9rem;
+}
+
+.arrows {
+    height: 16px; /* Ajuste o tamanho da imagem conforme necessário */
+    vertical-align: middle; /* Alinha a imagem verticalmente ao meio do texto */
+    margin-left: 5px; /* Adiciona um pequeno espaço entre o texto e a imagem */
 }
 
 table thead th:first-child {
@@ -198,6 +228,22 @@ table tbody tr {
     margin-right: .5rem;
 }
 
+.client-info {
+    display: inline-flex; /* Alinha texto e ícone na mesma linha */
+    align-items: center; /* Alinha verticalmente */
+    gap: 8px; /* Espaçamento entre o texto e o ícone */
+    color: #444; /* Cor do texto */
+    font-size: 0.9rem; /* Tamanho do texto */
+}
+
+.client-info .icon {
+    width: 20px; /* Largura do ícone */
+    height: 20px; /* Altura do ícone */
+    object-fit: contain; /* Garante que a imagem não distorça */
+    margin-left: 40px; /* Espaço entre o texto e o ícone */
+    cursor: pointer; /* Mostra o cursor de "mão" ao passar sobre o ícone */
+}
+
 .paid {
     display: inline-block;
     text-align: center;
@@ -205,7 +251,7 @@ table tbody tr {
     color: #000000;
     background: #D9D9D9;
     width: 120px;
-    height: 35px;
+    padding: .5rem 1rem;
     border-radius: 20px;
     font-size: .8rem;
 }
@@ -217,7 +263,7 @@ table tbody tr {
     color: #FFFFFF;
     background: #65558F;
     width: 120px;
-    height: 35px;
+    padding: .5rem 1rem;
     border-radius: 20px;
     font-size: .8rem;
 }
@@ -229,7 +275,7 @@ table tbody tr {
     color: #000000;
     background: #179C2C;
     width: 120px;
-    height: 35px;
+    padding: .5rem 1rem;
     border-radius: 20px;
     font-size: .8rem;
 }
