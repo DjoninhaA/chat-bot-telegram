@@ -9,6 +9,7 @@ API_KEY = os.getenv('BOT_TOKEN')
 API_BASE_URL = os.getenv('API_BASE_URL')
 
 USER_NAME = ""
+ID_PRODUTOS_PEDIDO = []
 
 class StartMessage(BaseMessage):
     LABEL = "start"
@@ -106,7 +107,7 @@ class ProductMessage(BaseMessage):
                 f"Subcategoria: {product['subcategoria']}\n"
                 f"Categoria: {product['categoria__nome']}\n\n"
             )
-            self.add_button(label="Adicionar ao Carrinho", callback=AddToCartMessage(self.navigation, self.product_name))
+            self.add_button(label="Adicionar ao Carrinho", callback=AddToCartMessage(self.navigation, [self.product_name]))
             return message
         else:
             return f"Produto {self.product_name} não encontrado."
@@ -118,22 +119,20 @@ class ProductMessage(BaseMessage):
 class AddToCartMessage(BaseMessage):
     LABEL = "add_to_cart"
 
-    def __init__(self, navigation: NavigationHandler, product_name: str) -> None:
+    def __init__(self, navigation: NavigationHandler, product_names: list) -> None:
         super().__init__(navigation, AddToCartMessage.LABEL)
-        self.product_name = product_name
+        self.product_names = product_names
         print(f"Nome: {USER_NAME}")  # Log para depuração
 
     def update(self) -> str:
         urlPostPedido = f"{API_BASE_URL}/pedido/criar/"
         
-        # Obter o ID do produto a partir do nome do produto
-        product_id = self.get_product_id_by_name(self.product_name)
-        
-        if product_id is None:
-            return f"Erro: Produto {self.product_name} não encontrado."
+        # Obter os IDs dos produtos a partir dos nomes dos produtos
+        global ID_PRODUTOS_PEDIDO
+        ID_PRODUTOS_PEDIDO = [self.get_product_id_by_name(product_name) for product_name in self.product_names]
 
         payload = {
-            "produtos_ids": [product_id],
+            "produtos_ids": [ID_PRODUTOS_PEDIDO], 
             "status": 0,
             "cliente": USER_NAME,  # Usar o nome da conversa
             "quantidade": 1  # Você pode ajustar a quantidade conforme necessário
@@ -144,10 +143,10 @@ class AddToCartMessage(BaseMessage):
         response = requests.post(urlPostPedido, json=payload, headers=headers)
         
         if response.status_code == 201:
-            return f"Produto {self.product_name} adicionado ao carrinho com sucesso!"
+            return f"Produtos {', '.join(self.product_names)} adicionados ao carrinho com sucesso!"
         else:
             print(f"Erro: {response.content}, status code: {response.status_code}")
-            return f"Erro ao adicionar o produto {self.product_name} ao carrinho. \n Erro: {response.content}"
+            return f"Erro ao adicionar os produtos ao carrinho."
 
     def get_product_id_by_name(self, product_name: str) -> int:
         url = f"{API_BASE_URL}/produto/data/"
@@ -158,9 +157,6 @@ class AddToCartMessage(BaseMessage):
                 if product['nome'] == product_name:
                     return product['id']
         return None
-
-    def get_keyboard(self):
-        return [{"text": "Voltar", "callback_data": "start"}]
 
 def start_bot():
     print("Starting bot...")  # Log para depuração
