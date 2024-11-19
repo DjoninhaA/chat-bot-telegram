@@ -8,6 +8,8 @@ load_dotenv()
 API_KEY = os.getenv('BOT_TOKEN')
 API_BASE_URL = os.getenv('API_BASE_URL')
 
+USER_NAME = ""
+
 class StartMessage(BaseMessage):
     LABEL = "start"
 
@@ -15,29 +17,12 @@ class StartMessage(BaseMessage):
         super().__init__(navigation, StartMessage.LABEL)
 
     def update(self, navigation) -> str:
-        print("update called")  # Log para depuração
         welcomeMessage = "Bem-vindo ao nosso cardápio!"
+        global USER_NAME
+        USER_NAME = self.navigation.user_name
         category_message = CategoryMessage(navigation, "Categorias")
         self.add_button(label="Categorias", callback=category_message)
         return welcomeMessage
-
-    def get_keyboard(self):
-        print("get_keyboard called")  # Log para depuração
-        url = f"{API_BASE_URL}/produto/data/"
-        print(f"Requesting URL: {url}")  # Log para depuração
-        response = requests.get(url)
-        print(f"Response status code: {response.status_code}")  # Log para depuração
-        print(f"Response content: {response.content}")  # Log para depuração
-        try:
-            products = response.json().get('produtos', [])
-        except json.JSONDecodeError as e:
-            print(f"JSON decode error: {e}")  # Log para depuração
-            products = []
-        categories = set(product['categoria__nome'] for product in products)
-        buttons = [{"text": category, "callback_data": category} for category in categories]
-        print("Categories:", categories)  # Log para depuração
-        print("Buttons:", buttons)  # Log para depuração
-        return buttons
 
 class CategoryMessage(BaseMessage):
     LABEL = "Categorias"
@@ -51,8 +36,6 @@ class CategoryMessage(BaseMessage):
         url = f"{API_BASE_URL}/produto/data/"
         print(f"Requesting URL: {url}")  # Log para depuração
         response = requests.get(url)
-        print(f"Response status code: {response.status_code}")  # Log para depuração
-        print(f"Response content: {response.content}")  # Log para depuração
         try:
             products = response.json().get('produtos', [])
         except json.JSONDecodeError as e:
@@ -138,9 +121,10 @@ class AddToCartMessage(BaseMessage):
     def __init__(self, navigation: NavigationHandler, product_name: str) -> None:
         super().__init__(navigation, AddToCartMessage.LABEL)
         self.product_name = product_name
+        print(f"Nome: {USER_NAME}")  # Log para depuração
 
     def update(self) -> str:
-        urlPostPedido = f"{API_BASE_URL}/pedido/ver/"
+        urlPostPedido = f"{API_BASE_URL}/pedido/criar/"
         
         # Obter o ID do produto a partir do nome do produto
         product_id = self.get_product_id_by_name(self.product_name)
@@ -151,7 +135,7 @@ class AddToCartMessage(BaseMessage):
         payload = {
             "produtos_ids": [product_id],
             "status": 0,
-            "cliente": "Nome do Cliente",  # Ajuste conforme necessário
+            "cliente": USER_NAME,  # Usar o nome da conversa
             "quantidade": 1  # Você pode ajustar a quantidade conforme necessário
         }
         headers = {
