@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function addTableLines(data) {
+    console.log(data);
     const table = document.querySelector('.prodTable');
 
     const oldLines = table.querySelectorAll('.tdStyle');
@@ -27,7 +28,7 @@ function addTableLines(data) {
         const newLines = document.createElement('tr');
         newLines.innerHTML = `
             <td class="tdStyle"><input type="checkbox" name="checkbox" value="${item.id}" class="checkboxStyle"></td>
-            <td class="tdStyle"><img src="${imagePaths.placeholder}" alt="Foto" class="imgStyle"></td>
+            <td class="tdStyle"><img src="${item.imagem}" alt="Foto" class="imgStyle"></td>
             <td class="tdStyle">${item.nome}</td>
             <td class="tdStyle">${item.categoria__nome}</td>
             <td class="tdStyle">R$ ${item.preco}</td>
@@ -116,7 +117,11 @@ function addLinks() {
             window.location.href = `/produto/detalhes/${id}`;
         });
     });
-} 
+}
+
+document.querySelector('.addProd').addEventListener('click', () => {
+    window.location.href = '/produto/adicionar';
+});
 
 document.getElementById('confirmDelete').addEventListener('click', () => {
     const deleteUrl = `/produto/deletar/${currentId}`;

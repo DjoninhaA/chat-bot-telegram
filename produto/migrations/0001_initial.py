@@ -33,6 +33,7 @@ class Migration(migrations.Migration):
                 ('subcategoria', models.CharField(max_length=100)),
                 ('criado_em', models.DateTimeField(auto_now_add=True)),
                 ('modificado_em', models.DateTimeField(auto_now=True)),
+                ('imagem', models.ImageField(upload_to='produtos/images/', null=True, blank=True)),
                 ('categoria', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='produto.categoria')),
             ],
         ),
