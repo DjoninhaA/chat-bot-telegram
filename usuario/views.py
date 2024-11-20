@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login as auth_login
 from .forms import UserRegistrationForm
+from django.http import JsonResponse
 from django.contrib import messages
+from django.contrib.auth.models import User
 
 def register(request):
     if request.method == 'POST':
@@ -36,3 +38,26 @@ def login(request):
 def user_logout(request):
     logout(request)  # Desloga o usuário
     return redirect('login')  # Redireciona para a página de login
+
+def get_user(request):
+
+    return render(request, 'usuarios.html', {'active_page' : 'Usuarios'})
+
+def user_data(request):
+    usuarios = User.objects.all()
+    userLista = []
+
+    for usuario in usuarios:
+        userLista.append({
+            'id': usuario.id,
+            'username': usuario.username,
+            'email': usuario.email,
+        })
+
+        page_number = int(request.GET.get('page', 1))
+        page_size = 10
+        start_index = (page_number - 1) * page_size
+        end_index = start_index + page_size
+
+        total_pages = (len(userLista) + page_size - 1) // page_size
+        return JsonResponse({'usuarios': userLista[start_index:end_index], 'totalPages': total_pages, 'currentPage': page_number})

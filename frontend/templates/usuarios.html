@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/frontend/static/CSS/geral.css">
+    <link rel="stylesheet" href="/frontend/static/CSS/sidebar.css">
+    <link rel="stylesheet" href="/frontend/static/CSS/usuarios.css">
+    <title>Usuarios</title>
+</head>
+<body>
+    <div class="geralContainer">
+        {% include 'sidebar.html' %}
+        <div class="divContainer">
+            <div class="divTitle"><span class="title">Usuários</span></div>
+            <div class="searchContainer">
+                <div class="divSearch">
+                    <img class="searchImg" src="{% static '/images/Search.png' %}" alt="Pesquisar">
+                    <input type="text" class="inputSearch" id="searchValue" placeholder="Pesquisar" autocomplete="off">
+                </div>
+            </div>
+            <div class="divTable">
+                <table class="userTable">
+                    <tr>
+                        <th class="thStyle" id="thNome">Nome </td>
+                        <th class="thStyle" id="thEmail">Email</td>
+                        <th class="thStyle" id="thTipo">Tipo </td>
+                        <th class="thStyle" id="thImages"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="divBtnFooter">
+                <span class="styleFooter disabledArrows" id="priorBtn"><</span>
+                <span class="totalPages">1</span>
+                <span class="styleFooter" id="nextBtn">></span>
+            </div>
+        </div>
+    </div>
+    <div id="overlay"></div>
+    <div id="modalDelete">
+        <p id="deleteMsg"></p>
+        <div class="divBtns">
+            <button class="styleBtn" id="cancelDelete">Cancelar</button>
+            <button class="styleBtn" id="confirmDelete">Deletar</button>
+        </div>
+    </div>
+    <script>
+        const activeElement = document.getElementById("{{ active_page }}").classList.add("selected");
+        const imagePaths = {
+            edit: '{% static "images/edit.png" %}',
+            delete: '{% static "images/delete.png" %}',
+        };
+    </script>
+    <script src="{% static 'usuarios.js' %}"></script>
+    <script src="{% static 'toastAlert.js' %}"></script>
+</body>
+</html>
