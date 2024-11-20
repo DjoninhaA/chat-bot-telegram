@@ -29,29 +29,13 @@
       />
       <span class="spacing">Produtos</span>
     </div>
-    <div class="divListSideBar" id="Entregas">
-      <img
-        src="{% static 'images/Entregas.png' %}"
-        class="spacing"
-        alt="Entregas"
-      />
-      <span class="spacing">Entregas</span>
-    </div>
-    <div class="divListSideBar" id="Usuario">
+    <div class="divListSideBar" id="Usuarios">
       <img
         src="{% static 'images/Usuario.png' %}"
         class="spacing"
         alt="Usuários"
       />
       <span class="spacing">Usuários</span>
-    </div>
-    <div class="divListSideBar" id="Configuracoes">
-      <img
-        src="{% static 'images/Configuracoes.png' %}"
-        class="spacing"
-        alt="Configurações"
-      />
-      <span class="spacing">Configurações</span>
     </div>
   </div>
   <div class="logoutContainer">
@@ -61,3 +45,17 @@
     </a>
   </div>
 </div>
+<script>
+  document.getElementById("Categorias").addEventListener("click", () => {
+    window.location.href = '/categoria';
+  });
+  document.getElementById("Conversas").addEventListener("click", () => {
+    window.location.href = '/conversas';
+  });
+  document.getElementById("Produtos").addEventListener("click", () => {
+    window.location.href = '/produto';
+  });
+  document.getElementById("Usuarios").addEventListener("click", () => {
+    window.location.href = '/usuario';
+  });
+</script>
