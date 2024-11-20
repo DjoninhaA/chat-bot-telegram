@@ -3,20 +3,65 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from .models import Pedido, Produto
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
-# View para renderizar pedidos (exemplo de visualização, se necessário)
 def get_status_string(status_code):
     status_mapping = {
-        0: "Pendente",
-        1: "Em andamento",
-        2: "Concluído",
-        # Adicione outros status se necessário
+        0: "Aguardando",
+        1: "Preparando",
+        2: "Pronto",
+        3: "Entregue",
+        4: "Cancelado"
     }
     return status_mapping.get(status_code, "Desconhecido")
 
-def renderizar(request):
-    if request.method =="GET":
-        return(request, 'pedido.html')
+@login_required
+def getPedidos(request):
+    
+    return render(request, 'pedidos.html', {'active_page': 'Pedidos'})
+
+@login_required
+@csrf_exempt
+def alterar_status(request, pedido_id):
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+            status = data.get('status')
+
+            if status not in [0, 1, 2, 3]:
+                return JsonResponse({'error': 'Status inválido'}, status=400)
+
+            pedido = Pedido.objects.get(id=pedido_id)
+            pedido.status = status
+            pedido.save()
+
+            return JsonResponse({'status': pedido.get_status_display()}, status=200)
+
+        except Pedido.DoesNotExist:
+            return JsonResponse({'error': f'Pedido com ID {pedido_id} não encontrado'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+        
+@login_required
+def search_pedidos(request):
+    query = request.GET.get('query', '')
+
+    if query.isdigit():
+        pedidos = Pedido.objects.filter(id=int(query))
+    else:
+        pedidos = Pedido.objects.filter(cliente__icontains=query)
+
+    pedidos_data = []
+    for pedido in pedidos:
+        pedidos_data.append({
+            'id': pedido.id,
+            'status': get_status_string(pedido.status),
+            'valor': pedido.valor,
+            'cliente': pedido.cliente,
+            'produtos': [produto.nome for produto in pedido.produto.all()],
+        })
+
+    return JsonResponse({'pedidos': pedidos_data}, status=200)
 
 @csrf_exempt
 def listar_pedidos(request):

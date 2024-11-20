@@ -1,7 +1,7 @@
 from django.db import models
 from produto.models import Produto
 
-ORDER_STATUS = ((0, 'AGUARDANDO'), (1, 'PREPARANDO'), (2, 'PRONTO'))
+ORDER_STATUS = ((0, 'Aguardando'), (1, 'Preparando'), (2, 'Pronto'), (3, 'Entregue'), (4, 'Cancelado'))
 
 class Pedido(models.Model):
     id = models.AutoField(primary_key=True)
