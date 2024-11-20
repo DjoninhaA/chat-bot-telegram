@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/frontend/static/CSS/geral.css">
+    <link rel="stylesheet" href="/frontend/static/CSS/sidebar.css">
+    <link rel="stylesheet" href="/frontend/static/CSS/categorias.css">
+    <title>Categorias</title>
+</head>
+<body>
+    <div class="geralContainer">
+        {% include 'sidebar.html' %}
+        <div class="divContainer">
+            <div class="divTitle"><span class="title">Lista de Categorias</span></div>
+            <div class="searchContainer">
+                <div class="divSearch">
+                    <img class="searchImg" src="{% static '/images/Search.png' %}" alt="Pesquisar">
+                    <input type="text" class="inputSearch" id="searchValue" placeholder="Pesquisar" autocomplete="off">
+                </div>
+                <button class="addCat">Adicionar Categoria</button>
+            </div>
+            <div class="divTable">
+                <table class="catTable">
+                    <tr>
+                        <th class="thStyle" id="thNome">Nome </td>
+                        <th class="thStyle" id="thCate">Descricao </td>
+                        <th class="thStyle" id="thCriacao">Criado em </td>
+                        <th class="thStyle" id="thImages"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="divBtnFooter">
+                <span class="styleFooter disabledArrows" id="priorBtn"><</span>
+                <span class="totalPages">1</span>
+                <span class="styleFooter" id="nextBtn">></span>
+            </div>
+        </div>
+    </div>
+    <div id="overlay"></div>
+    <div id="modalDelete" class="modals">
+        <p id="deleteMsg"></p>
+        <div class="divBtns">
+            <button class="styleBtn btnsCancel" id="cancelDelete">Cancelar</button>
+            <button class="styleBtn btnsAdd" id="confirmDelete">Deletar</button>
+        </div>
+    </div>
+    <div id="modalAdd" class="modals">
+        <div class="divTitle"><span class="title">Adicionar Categoria</span></div>
+        <div class="divForm">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" class="inputStyle" required>
+            <label for="descricao">Descrição:</label>
+            <textarea name="descricao" id="descricao" class="inputStyle"></textarea>
+            <div class="divBtns">
+                <button class="styleBtn btnsCancel" id="cancelAdd">Cancelar</button>
+                <button class="styleBtn btnsAdd" id="confirmAdd">Adicionar</button>
+            </div>
+        </div>
+    </div>
+    <div id="modalEdit" class="modals">
+        <div class="divTitle"><span class="title">Editar Categoria</span></div>
+        <div class="divForm">
+            <label for="nomeEdit">Nome:</label>
+            <input type="text" id="nomeEdit" name="nomeEdit" class="inputStyle" required>
+            <label for="descricaoEdit">Descrição:</label>
+            <textarea name="descricaoEdit" id="descricaoEdit" class="inputStyle"></textarea>
+            <div class="divBtns">
+                <button class="styleBtn btnsCancel" id="cancelEdit">Cancelar</button>
+                <button class="styleBtn btnsAdd" id="confirmEdit">Editar</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const activeElement = document.getElementById("{{ active_page }}").classList.add("selected");
+        const imagePaths = {
+            edit: '{% static "images/edit.png" %}',
+            delete: '{% static "images/delete.png" %}',
+        };
+    </script>
+    <script src="{% static 'categorias.js' %}"></script>
+    <script src="{% static 'toastAlert.js' %}"></script>
+</body>
+</html>

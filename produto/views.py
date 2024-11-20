@@ -77,6 +77,7 @@ def categoria_create(request):
         data = json.loads(request.body)
         categoria = Categoria.objects.create(
             nome=data['nome'],
+            descricao=data['descricao'] or ''
         )
 
         return JsonResponse({'message': 'Categoria criada com sucesso!', 'success':'true', 'categoriaNome': categoria.nome, 'categoriaId': categoria.id})
@@ -130,3 +131,37 @@ def produto_search(request):
     totalPages = (len(produtos) + pageSize -1 ) // pageSize
 
     return JsonResponse({'Produtos': produtosLista, 'totalPages': totalPages, 'currentPage': pageNumber})
+
+def get_categorias(request):
+
+    return render(request, 'categorias.html', {'active_page': 'Categorias'})
+
+def categoria_data(request):
+    categorias = Categoria.objects.all().values('id', 'nome', 'descricao', 'criado_em')
+
+    return JsonResponse({'categorias': list(categorias)})
+
+@csrf_exempt
+@require_http_methods(['DELETE'])
+def categoria_delete(request, id):
+    try:
+        categoria = Categoria.objects.get(id=id)
+        categoria.delete()
+        return JsonResponse({'message': 'Categoria deletada com sucesso!'})
+    except Categoria.DoesNotExist:
+        return JsonResponse({'message': 'Categoria não encontrada!'}, status=404)
+    
+@csrf_exempt
+@require_http_methods(['PUT'])
+def categoria_edit(request, id):
+    try:
+        categoria = Categoria.objects.get(id=id)
+        data = json.loads(request.body)
+        categoria.nome = data['nome']
+        categoria.descricao = data['descricao']
+        categoria.save()
+        return JsonResponse({'message': 'Categoria editada com sucesso!'})
+    except Categoria.DoesNotExist:
+        return JsonResponse({'message': 'Categoria não encontrada!'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
