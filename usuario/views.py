@@ -4,6 +4,7 @@ from .forms import UserRegistrationForm
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 
 def register(request):
     if request.method == 'POST':
@@ -61,3 +62,12 @@ def user_data(request):
 
         total_pages = (len(userLista) + page_size - 1) // page_size
         return JsonResponse({'usuarios': userLista[start_index:end_index], 'totalPages': total_pages, 'currentPage': page_number})
+
+@csrf_exempt
+def user_delete(request, id):
+    try:
+        user = User.objects.get(id=id)
+        user.delete()
+        return JsonResponse({'message': 'Usuário deletado com sucesso!'})
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'Usuário não encontrado!'}, status=404)
