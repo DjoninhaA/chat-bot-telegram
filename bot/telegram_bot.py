@@ -85,9 +85,7 @@ def show_product_details(call):
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("add_to_cart_"))
 def add_to_cart(call):
-    """ print(call.data) """
     product_name = call.data.replace("add_to_cart_", "")
-    print(product_name)
     global ID_PRODUTOS_PEDIDO
     product_id = get_product_id_by_name(product_name)
     if product_id:
