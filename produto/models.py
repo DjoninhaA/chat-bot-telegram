@@ -10,7 +10,7 @@ class Categoria(models.Model):
         return self.nome
 
 class Produto(models.Model):
-    imagem = models.ImageField(upload_to='produtos/images/', null=True, blank=True)
+    imagem = models.ImageField(upload_to='media/images/', null=True, blank=True)
     nome = models.CharField(max_length=100)
     descricao = models.TextField()
     preco = models.DecimalField(max_digits=10, decimal_places=2)

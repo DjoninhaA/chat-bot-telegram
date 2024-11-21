@@ -11,5 +11,8 @@ urlpatterns = [
     path('pedido/', include('pedido.urls')),
     path('bot', include('bot.urls')),
      path('', lambda request: redirect('login')),
-    path('usuario/', include ('usuario.urls'))
+    path('usuario/', include ('usuario.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

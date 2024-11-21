@@ -3,7 +3,8 @@ import json
 import requests
 from dotenv import load_dotenv
 import telebot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from bot.pagamento import enviar_pix_qr_code
 
 load_dotenv()
 API_KEY = os.getenv('BOT_TOKEN')
@@ -11,6 +12,7 @@ API_BASE_URL = os.getenv('API_BASE_URL')
 
 USER_NAME = ""
 ID_PRODUTOS_PEDIDO = []
+ENDERECO_ENTREGA = ""
 
 bot = telebot.TeleBot(API_KEY)
 
@@ -39,7 +41,7 @@ def category_message(message):
     for category in categories:
         markup.add(InlineKeyboardButton(category, callback_data=f"category_{category}"))
     markup.add(InlineKeyboardButton("Voltar", callback_data="start"))
-    bot.send_message(message.chat.id, "Categorias disponíveis:", reply_markup=markup)
+    bot.edit_message_text(chat_id=message.chat.id, message_id=message.message_id, text="Categorias disponíveis:", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("category_"))
 def show_category_products(call):
@@ -51,12 +53,26 @@ def show_category_products(call):
     except json.JSONDecodeError:
         products = []
     category_products = [product for product in products if product['categoria__nome'] == category]
-    message = f"Produtos na categoria {category}:\n\n"
-    markup = InlineKeyboardMarkup()
+    
     for product in category_products:
-        markup.add(InlineKeyboardButton(product['nome'], callback_data=f"product_{product['nome']}"))
+        message = (
+            f"Nome: {product['nome']}\n"
+            f"Descrição: {product['descricao']}\n"
+            f"Preço: R$ {product['preco']}\n"
+        )
+        bot.send_photo(
+            call.message.chat.id,
+            product['imagem'],
+            caption=message,
+            reply_markup=InlineKeyboardMarkup().add(
+                InlineKeyboardButton("Adicionar ao Carrinho", callback_data=f"add_to_cart_{product['nome']}")
+            )
+        )
+    
+    # Adicionar botão de voltar ao final
+    markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("Voltar", callback_data="navigate_to_categories"))
-    bot.send_message(call.message.chat.id, message, reply_markup=markup)
+    bot.send_message(call.message.chat.id, "Escolha uma ação:", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("product_"))
 def show_product_details(call):
@@ -78,10 +94,16 @@ def show_product_details(call):
         )
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton("Adicionar ao Carrinho", callback_data=f"add_to_cart_{product['nome']}"))
-        markup.add(InlineKeyboardButton("Voltar", callback_data=f"category_{product['categoria__nome']}"))
-        bot.send_message(call.message.chat.id, message, reply_markup=markup)
+        markup.add(InlineKeyboardButton("Voltar", callback_data="navigate_to_categories"))
+        bot.send_photo(
+            chat_id=call.message.chat.id,
+            photo=product['imagem'],  # URL da imagem do produto
+            caption=message,
+            reply_markup=markup
+        )
     else:
-        bot.send_message(call.message.chat.id, f"Produto {product_name} não encontrado.")
+        bot.send_message(call.message.chat.id,
+                         f"Produto {product_name} não encontrado.")
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("add_to_cart_"))
 def add_to_cart(call):
@@ -90,11 +112,13 @@ def add_to_cart(call):
     product_id = get_product_id_by_name(product_name)
     if product_id:
         ID_PRODUTOS_PEDIDO.append(product_id)
-        bot.send_message(call.message.chat.id, f"Produto {product_name} adicionado ao carrinho com sucesso!")
+        markup = InlineKeyboardMarkup()
+        markup.add(InlineKeyboardButton("Voltar", callback_data="navigate_to_categories"))
+        markup.add(InlineKeyboardButton("Finalizar pedido", callback_data="finalizar_pedido"))
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Produto adicionado ao carrinho! \nDeseja comprar outros produtos?", reply_markup=markup)
     else:
-        bot.send_message(call.message.chat.id, f"Erro ao adicionar o produto {product_name} ao carrinho.")
-        
-
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Erro ao adicionar o produto {product_name} ao carrinho.")
+    
 def get_product_id_by_name(product_name):
     url = f"{API_BASE_URL}/produto/data/"
     response = requests.get(url)
@@ -106,6 +130,49 @@ def get_product_id_by_name(product_name):
     else:
         print(f"Erro ao buscar produtos: {response.status_code}")
     return None
+
+def calcular_valor_total(produtos_ids):
+    url = f"{API_BASE_URL}/produto/data/"
+    response = requests.get(url)
+    try:
+        products = response.json().get('produtos', [])
+    except json.JSONDecodeError:
+        products = []
+    total = 0
+    for product_id in produtos_ids:
+        product = next((p for p in products if p['id'] == product_id), None)
+        if product:
+            total += float(product['preco'])
+    return total
+
+@bot.callback_query_handler(func=lambda call: call.data == "finalizar_pedido")
+def finalizar_pedido(call):
+    bot.send_message(call.message.chat.id, "Por favor, informe o endereço de entrega:")
+    bot.register_next_step_handler(call.message, receber_endereco_entrega)
+
+def receber_endereco_entrega(message):
+    global ENDERECO_ENTREGA
+    ENDERECO_ENTREGA = message.text
+    valor_total = calcular_valor_total(ID_PRODUTOS_PEDIDO)
+    chave_pix = "45998240404"
+    descricao = "Pagamento do pedido:" + " + ".join(get_product_names(ID_PRODUTOS_PEDIDO))
+    
+    enviar_pix_qr_code(message.chat.id, valor_total, chave_pix, descricao, bot)
+    bot.send_message(message.chat.id, f"Pedido finalizado! Use o QR Code abaixo para realizar o pagamento via Pix.\n\nEndereço de entrega: {ENDERECO_ENTREGA}")
+
+def get_product_names(produtos_ids):
+    url = f"{API_BASE_URL}/produto/data/"
+    response = requests.get(url)
+    try:
+        products = response.json().get('produtos', [])
+    except json.JSONDecodeError:
+        products = []
+    product_names = []
+    for product_id in produtos_ids:
+        product = next((p for p in products if p['id'] == product_id), None)
+        if product:
+            product_names.append(product['nome'])
+    return product_names
 
 if __name__ == "__main__":
     bot.polling()
