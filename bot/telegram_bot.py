@@ -17,39 +17,35 @@ class StartMessage(BaseMessage):
     def __init__(self, navigation: NavigationHandler) -> None:
         super().__init__(navigation, StartMessage.LABEL)
 
-    def update(self, navigation) -> str:
+    def update(self) -> str:
         welcomeMessage = "Bem-vindo ao nosso cardápio!"
         global USER_NAME
         USER_NAME = self.navigation.user_name
-        category_message = CategoryMessage(navigation, "Categorias")
-        self.add_button(label="Categorias", callback=category_message)
+        self.add_button(label="Categorias", callback=self.navigate_to_categories)
         return welcomeMessage
+
+    async def navigate_to_categories(self) -> None:
+        category_message = CategoryMessage(self.navigation)
+        await self.navigation.goto_menu(category_message)
 
 class CategoryMessage(BaseMessage):
     LABEL = "Categorias"
 
-    def __init__(self, navigation: NavigationHandler, category: str) -> None:
+    def __init__(self, navigation: NavigationHandler) -> None:
         super().__init__(navigation, CategoryMessage.LABEL)
-        self.category = category
+        self.category = None
 
     def update(self) -> str:
-        print(f"update called for category: {self.category}")  # Log para depuração
         url = f"{API_BASE_URL}/produto/data/"
-        print(f"Requesting URL: {url}")  # Log para depuração
         response = requests.get(url)
         try:
             products = response.json().get('produtos', [])
         except json.JSONDecodeError as e:
-            print(f"JSON decode error: {e}")  # Log para depuração
             products = []
         categories = set(product['categoria__nome'] for product in products)
         for category in categories:
             self.add_button(label=category, callback=ProductMessage(self.navigation, category=category))
-        return f"Produtos na categoria {self.category}:\n\n"
-
-    def get_keyboard(self):
-        print(f"get_keyboard called for category: {self.category}")  # Log para depuração
-        return [{"text": "Voltar", "callback_data": "start"}]
+        return "Categorias disponíveis:\n\n"
 
 class ProductMessage(BaseMessage):
     LABEL = "product"
