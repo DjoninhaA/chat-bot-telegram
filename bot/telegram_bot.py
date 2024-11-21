@@ -45,7 +45,12 @@ class CategoryMessage(BaseMessage):
         categories = set(product['categoria__nome'] for product in products)
         for category in categories:
             self.add_button(label=category, callback=ProductMessage(self.navigation, category=category))
+        self.add_button(label="Voltar", callback=self.navigate_back)
         return "Categorias disponíveis:\n\n"
+
+    async def navigate_back(self) -> None:
+        start_message = StartMessage(self.navigation)
+        await self.navigation.goto_menu(start_message)
 
 class ProductMessage(BaseMessage):
     LABEL = "product"
@@ -62,36 +67,26 @@ class ProductMessage(BaseMessage):
             return self.get_category_products()
 
     def get_category_products(self) -> str:
-        print(f"update called for category: {self.category}")  # Log para depuração
         url = f"{API_BASE_URL}/produto/data/"
-        print(f"Requesting URL: {url}")  # Log para depuração
         response = requests.get(url)
-        print(f"Response status code: {response.status_code}")  # Log para depuração
-        print(f"Response content: {response.content}")  # Log para depuração
         try:
             products = response.json().get('produtos', [])
         except json.JSONDecodeError as e:
-            print(f"JSON decode error: {e}")  # Log para depuração
             products = []
-        message = f"Produtos na categoria {self.category}:\n\n"
         category_products = [product for product in products if product['categoria__nome'] == self.category]
+        message = f"Produtos na categoria {self.category}:\n\n"
         for product in category_products:
             self.add_button(label=product['nome'], callback=ProductMessage(self.navigation, product_name=product['nome']))
+        self.add_button(label="Voltar", callback=self.navigate_back)
         return message
 
     def get_product_details(self) -> str:
-        print(f"update called for product: {self.product_name}")  # Log para depuração
         url = f"{API_BASE_URL}/produto/data/"
-        print(f"Requesting URL: {url}")  # Log para depuração
         response = requests.get(url)
-        print(f"Response status code: {response.status_code}")  # Log para depuração
-        print(f"Response content: {response.content}")  # Log para depuração
         try:
             products = response.json().get('produtos', [])
         except json.JSONDecodeError as e:
-            print(f"JSON decode error: {e}")  # Log para depuração
             products = []
-        
         product = next((p for p in products if p['nome'] == self.product_name), None)
         if product:
             message = (
@@ -99,18 +94,17 @@ class ProductMessage(BaseMessage):
                 f"Nome: {product['nome']}\n"
                 f"Descrição: {product['descricao']}\n"
                 f"Preço: R$ {product['preco']}\n"
-                #f"Tempo de Preparo: {product['tempoDePreparo']} minutos\n"
-                #f"Subcategoria: {product['subcategoria']}\n"
                 f"Categoria: {product['categoria__nome']}\n\n"
             )
             self.add_button(label="Adicionar ao Carrinho", callback=AddToCartMessage(self.navigation, [self.product_name]))
+            self.add_button(label="Voltar", callback=self.navigate_back)
             return message
         else:
             return f"Produto {self.product_name} não encontrado."
 
-    def get_keyboard(self):
-        print(f"get_keyboard called for category: {self.category}")  # Log para depuração
-        return [{"text": "Voltar", "callback_data": "start"}]
+    async def navigate_back(self) -> None:
+        category_message = CategoryMessage(self.navigation)
+        await self.navigation.goto_menu(category_message)
 
 class AddToCartMessage(BaseMessage):
     LABEL = "add_to_cart"
