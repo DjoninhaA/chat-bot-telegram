@@ -125,18 +125,9 @@ def show_product_details(call):
                          f"Produto {product_name} não encontrado.")
         MENSAGENS_ENVIADAS.append(sent_message.message_id)
 
-def delete_catalog_messages(call):
-    # Apagar todas as mensagens enviadas pela função show_product_details
-    for message_id in MENSAGENS_ENVIADAS:
-        bot.delete_message(chat_id=call.message.chat.id, message_id=message_id)
-    MENSAGENS_ENVIADAS.clear()
-
-    if call.data.startswith("add_to_cart_"):
-        add_to_cart(call)
-    elif call.data == "navigate_to_categories":
-        navigate_to_categories(call)
-
+@bot.callback_query_handler(func=lambda call: call.data.startswith("add_to_cart_"))
 def add_to_cart(call):
+    print("entrou add_to_cart function")
     product_name = call.data.replace("add_to_cart_", "")
     global ID_PRODUTOS_PEDIDO
     product_id = get_product_id_by_name(product_name)
