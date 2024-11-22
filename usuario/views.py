@@ -45,23 +45,10 @@ def get_user(request):
     return render(request, 'usuarios.html', {'active_page' : 'Usuarios'})
 
 def user_data(request):
-    usuarios = User.objects.all()
-    userLista = []
+    usuarios = User.objects.all().values('id', 'username', 'email')
+    usuarios_lista = list(usuarios)
 
-    for usuario in usuarios:
-        userLista.append({
-            'id': usuario.id,
-            'username': usuario.username,
-            'email': usuario.email,
-        })
-
-        page_number = int(request.GET.get('page', 1))
-        page_size = 10
-        start_index = (page_number - 1) * page_size
-        end_index = start_index + page_size
-
-        total_pages = (len(userLista) + page_size - 1) // page_size
-        return JsonResponse({'usuarios': userLista[start_index:end_index], 'totalPages': total_pages, 'currentPage': page_number})
+    return JsonResponse({'usuarios': usuarios_lista})
 
 @csrf_exempt
 def user_delete(request, id):
