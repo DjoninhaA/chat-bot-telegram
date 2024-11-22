@@ -11,3 +11,4 @@ def showProducts():
     response = requests.get(f"{API_BASE_URL}/produto/data/")
     products = response.json()
     return products['produtos']
+
