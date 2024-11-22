@@ -13,14 +13,6 @@
       />
       <span class="spacing">Categorias</span>
     </div>
-    <div class="divListSideBar" id="Conversas">
-      <img
-        src="{% static 'images/Conversas.png' %}"
-        class="spacing"
-        alt="Conversas"
-      />
-      <span class="spacing">Conversas</span>
-    </div>
     <div class="divListSideBar" id="Produtos">
       <img
         src="{% static 'images/Produtos.png' %}"
@@ -49,13 +41,10 @@
   document.getElementById("Categorias").addEventListener("click", () => {
     window.location.href = '/produto/categoria';
   });
-  document.getElementById("Conversas").addEventListener("click", () => {
-    window.location.href = '/conversas';
-  });
   document.getElementById("Produtos").addEventListener("click", () => {
-    window.location.href = '/produto';
+    window.location.href = '/produto/';
   });
   document.getElementById("Usuarios").addEventListener("click", () => {
-    window.location.href = '/usuario';
+    window.location.href = '/usuario/';
   });
 </script>

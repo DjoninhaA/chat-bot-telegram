@@ -7,6 +7,11 @@
     background-color: #eaedef;
 }
 
+.imgStyle {
+    width: 80px;
+    height: 80px;
+}
+
 .divTitle {
     margin-top: 2%;
     display: flex;

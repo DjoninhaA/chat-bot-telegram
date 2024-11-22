@@ -233,7 +233,7 @@ document.getElementById('confirmDelete').addEventListener('click', () => {
 });
 
 function nextDataPage(page = 1) {
-    const urlPage = `/produto/categoria/data`;
+    const urlPage = `/produto/categoria/data/`;
 
     fetch(urlPage, {
         method: 'GET',

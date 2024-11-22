@@ -11,7 +11,7 @@ def gerar_pix_qr_code(valor, chave_pix, descricao):
     :param descricao: Descrição do pagamento
     :return: Imagem do QR Code e string do Pix
     """
-    pix_data = f"00020126360014BR.GOV.BCB.PIX0114{chave_pix}5204000053039865404{valor:.2f}5802BR5913Nome Recebedor6009Cidade12362070503***6304"
+    pix_data = f"00020126360014BR.GOV.BCB.PIX0114{chave_pix}5204000053039865404{valor:.2f}5802BR5913FelipeBoufleuher6009Toledo12362070503***6304"
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,

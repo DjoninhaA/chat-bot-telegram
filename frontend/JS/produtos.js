@@ -120,7 +120,7 @@ function addLinks() {
 }
 
 document.querySelector('.addProd').addEventListener('click', () => {
-    window.location.href = '/produto/adicionar';
+    window.location.href = '/produto/adicionar/';
 });
 
 document.getElementById('confirmDelete').addEventListener('click', () => {
