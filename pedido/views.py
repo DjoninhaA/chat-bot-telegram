@@ -4,6 +4,8 @@ from django.shortcuts import render
 from .models import Pedido, Produto
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
+import requests
 
 def get_status_string(status_code):
     status_mapping = {
@@ -35,13 +37,31 @@ def alterar_status(request, pedido_id):
             pedido.status = status
             pedido.save()
 
+            # Enviar notificação ao bot
+            send_status_update_to_bot(pedido.cliente, pedido.id, status)
+
             return JsonResponse({'status': pedido.get_status_display()}, status=200)
 
         except Pedido.DoesNotExist:
             return JsonResponse({'error': f'Pedido com ID {pedido_id} não encontrado'}, status=404)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
-        
+
+def send_status_update_to_bot(cliente, pedido_id, status):
+    bot_token = settings.BOT_TOKEN
+    chat_id = get_chat_id_by_cliente(cliente)  # Função para obter o chat_id do cliente
+    status_message = f"O status do seu pedido #{pedido_id} foi atualizado para: {get_status_string(status)}"
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    payload = {
+        'chat_id': chat_id,
+        'text': status_message
+    }
+    requests.post(url, json=payload)
+
+def get_chat_id_by_cliente(cliente):
+    # Implementar lógica para obter o chat_id do cliente com base no nome ou ID do cliente
+    pass
+
 @login_required
 def search_pedidos(request):
     query = request.GET.get('query', '')
