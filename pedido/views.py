@@ -6,6 +6,15 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 import requests
+import os
+from dotenv import load_dotenv
+
+# Carregar variáveis de ambiente do arquivo .env
+load_dotenv()
+
+# Outras configurações...
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 def get_status_string(status_code):
     status_mapping = {
@@ -22,7 +31,6 @@ def getPedidos(request):
     
     return render(request, 'pedidos.html', {'active_page': 'Pedidos'})
 
-@login_required
 @csrf_exempt
 def alterar_status(request, pedido_id):
     if request.method == 'PUT':
@@ -48,10 +56,9 @@ def alterar_status(request, pedido_id):
             return JsonResponse({'error': str(e)}, status=500)
 
 def send_status_update_to_bot(cliente, pedido_id, status):
-    bot_token = settings.BOT_TOKEN
     chat_id = get_chat_id_by_cliente(cliente)  # Função para obter o chat_id do cliente
     status_message = f"O status do seu pedido #{pedido_id} foi atualizado para: {get_status_string(status)}"
-    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {
         'chat_id': chat_id,
         'text': status_message
