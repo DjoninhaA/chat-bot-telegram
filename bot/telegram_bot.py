@@ -16,6 +16,9 @@ ENDERECO_ENTREGA = ""
 
 bot = telebot.TeleBot(API_KEY)
 
+# Certifique-se de que o caminho da pasta de mídia está correto
+MEDIA_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'media', 'images')
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     global USER_NAME
@@ -60,30 +63,40 @@ def show_category_products(call):
             f"Descrição: {product['descricao']}\n"
             f"Preço: R$ {product['preco']}\n"
         )
-        bot.send_photo(
-            call.message.chat.id,
-            product['imagem'],
-            caption=message,
-            reply_markup=InlineKeyboardMarkup().add(
-                InlineKeyboardButton("Adicionar ao Carrinho", callback_data=f"add_to_cart_{product['nome']}")
+        
+        # Remover a parte 'http://127.0.0.1:8000' da URL da imagem
+        image_url = product["imagem"].replace("http://127.0.0.1:8000/", "")
+        # Use o caminho absoluto para abrir a imagem
+        with open(image_url, 'rb') as image_file:
+            bot.send_photo(
+                chat_id=call.message.chat.id,
+                photo=image_file,
+                caption=message,
+                reply_markup=InlineKeyboardMarkup().add(
+                    InlineKeyboardButton("Adicionar ao Carrinho", callback_data=f"add_to_cart_{product['nome']}")
+                )
             )
-        )
     
     # Adicionar botão de voltar ao final
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("Voltar", callback_data="navigate_to_categories"))
-    bot.send_message(call.message.chat.id, "Escolha uma ação:", reply_markup=markup)
+    bot.send_message(call.message.chat.id, "Deseja voltar ao menu de categorias?", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("product_"))
 def show_product_details(call):
     product_name = call.data.split("_")[1]
     url = f"{API_BASE_URL}/produto/data/"
     response = requests.get(url)
+    print(response.json())
     try:
         products = response.json().get('produtos', [])
     except json.JSONDecodeError:
         products = []
     product = next((p for p in products if p['nome'] == product_name), None)
+    
+    # Certifique-se de que o caminho da pasta de mídia está correto
+    MEDIA_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'media', 'images')
+    print(MEDIA_ROOT)
     if product:
         message = (
             f"Detalhes do Produto:\n\n"
@@ -95,12 +108,17 @@ def show_product_details(call):
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton("Adicionar ao Carrinho", callback_data=f"add_to_cart_{product['nome']}"))
         markup.add(InlineKeyboardButton("Voltar", callback_data="navigate_to_categories"))
-        bot.send_photo(
-            chat_id=call.message.chat.id,
-            photo=product['imagem'],  # URL da imagem do produto
-            caption=message,
-            reply_markup=markup
-        )
+        
+        # Use o caminho absoluto para abrir a imagem
+        image_path = os.path.join(MEDIA_ROOT, product["imagem"])
+        print(image_path)
+        with open(image_path, 'rb') as image_file:
+            bot.send_photo(
+                chat_id=call.message.chat.id,
+                photo=image_file,
+                caption=message,
+                reply_markup=markup
+            )
     else:
         bot.send_message(call.message.chat.id,
                          f"Produto {product_name} não encontrado.")
