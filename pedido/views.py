@@ -136,7 +136,8 @@ def pedido_create(request):
             pedido = Pedido.objects.create(
                 status=data['status'],
                 valor=valor_total,
-                cliente=data['cliente']
+                cliente=data['cliente'],
+                endereco_entrega=data['endereco_entrega']
             )
 
             # Associar os produtos ao pedido

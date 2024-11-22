@@ -8,6 +8,9 @@ class Pedido(models.Model):
     status = models.SmallIntegerField(choices=ORDER_STATUS)
     data = models.DateTimeField(auto_now=True)
     valor = models.FloatField(null=False)
-
     produto = models.ManyToManyField(Produto)
     cliente = models.CharField(max_length=255, default=None)
+    endereco_entrega = models.CharField(max_length=255, default='')
+
+    def __str__(self):
+        return f"Pedido {self.id} - {self.cliente}"

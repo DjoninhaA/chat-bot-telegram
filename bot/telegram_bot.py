@@ -177,6 +177,22 @@ def receber_endereco_entrega(message):
     chave_pix = "45998240404"
     descricao = "Pagamento do pedido:" + " + ".join(get_product_names(ID_PRODUTOS_PEDIDO))
     
+    # Enviar o pedido para o backend
+    pedido_data = {
+        "status": 0,  # Status inicial do pedido
+        "valor": valor_total,
+        "cliente": message.chat.id,  # Usar o chat_id como identificador do cliente
+        "endereco_entrega": ENDERECO_ENTREGA,
+        "produtos_ids": ID_PRODUTOS_PEDIDO
+    }
+    response = requests.post(f"{API_BASE_URL}/pedido/criar/", json=pedido_data)
+    
+    if response.status_code == 201:
+        bot.send_message(message.chat.id, "Pedido criado com sucesso!")
+    else:
+        bot.send_message(message.chat.id, "Erro ao criar o pedido. Tente novamente mais tarde.")
+        print(f"Erro ao criar o pedido: {response}")
+    
     enviar_pix_qr_code(message.chat.id, valor_total, chave_pix, descricao, bot)
     bot.send_message(message.chat.id, f"Pedido finalizado! Use o QR Code acima para realizar o pagamento via Pix.\n\nEndereço de entrega: {ENDERECO_ENTREGA}")
 
