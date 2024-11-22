@@ -19,6 +19,10 @@ bot = telebot.TeleBot(API_KEY)
 # Certifique-se de que o caminho da pasta de mídia está correto
 MEDIA_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'media', 'images')
 
+# Variável global para armazenar os IDs das mensagens enviadas
+global MENSAGENS_ENVIADAS
+MENSAGENS_ENVIADAS = []
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     global USER_NAME
@@ -57,6 +61,9 @@ def show_category_products(call):
         products = []
     category_products = [product for product in products if product['categoria__nome'] == category]
     
+    # Apagar a mensagem do menu de categorias
+    bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+    
     for product in category_products:
         message = (
             f"Nome: {product['nome']}\n"
@@ -66,7 +73,6 @@ def show_category_products(call):
         
         # Remover a parte 'http://127.0.0.1:8000' da URL da imagem
         image_url = product["imagem"].replace("http://127.0.0.1:8000/", "")
-        # Use o caminho absoluto para abrir a imagem
         with open(image_url, 'rb') as image_file:
             bot.send_photo(
                 chat_id=call.message.chat.id,
@@ -87,16 +93,12 @@ def show_product_details(call):
     product_name = call.data.split("_")[1]
     url = f"{API_BASE_URL}/produto/data/"
     response = requests.get(url)
-    print(response.json())
     try:
         products = response.json().get('produtos', [])
     except json.JSONDecodeError:
         products = []
     product = next((p for p in products if p['nome'] == product_name), None)
     
-    # Certifique-se de que o caminho da pasta de mídia está correto
-    MEDIA_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'media', 'images')
-    print(MEDIA_ROOT)
     if product:
         message = (
             f"Detalhes do Produto:\n\n"
@@ -109,21 +111,31 @@ def show_product_details(call):
         markup.add(InlineKeyboardButton("Adicionar ao Carrinho", callback_data=f"add_to_cart_{product['nome']}"))
         markup.add(InlineKeyboardButton("Voltar", callback_data="navigate_to_categories"))
         
-        # Use o caminho absoluto para abrir a imagem
-        image_path = os.path.join(MEDIA_ROOT, product["imagem"])
-        print(image_path)
-        with open(image_path, 'rb') as image_file:
-            bot.send_photo(
+        image_url = product["imagem"].replace("http://127.0.0.1:8000/", "")
+        with open(image_url, 'rb') as image_file:
+            sent_message = bot.send_photo(
                 chat_id=call.message.chat.id,
                 photo=image_file,
                 caption=message,
                 reply_markup=markup
             )
+            MENSAGENS_ENVIADAS.append(sent_message.message_id)
     else:
-        bot.send_message(call.message.chat.id,
+        sent_message = bot.send_message(call.message.chat.id,
                          f"Produto {product_name} não encontrado.")
+        MENSAGENS_ENVIADAS.append(sent_message.message_id)
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith("add_to_cart_"))
+def delete_catalog_messages(call):
+    # Apagar todas as mensagens enviadas pela função show_product_details
+    for message_id in MENSAGENS_ENVIADAS:
+        bot.delete_message(chat_id=call.message.chat.id, message_id=message_id)
+    MENSAGENS_ENVIADAS.clear()
+
+    if call.data.startswith("add_to_cart_"):
+        add_to_cart(call)
+    elif call.data == "navigate_to_categories":
+        navigate_to_categories(call)
+
 def add_to_cart(call):
     product_name = call.data.replace("add_to_cart_", "")
     global ID_PRODUTOS_PEDIDO
@@ -133,9 +145,9 @@ def add_to_cart(call):
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton("Voltar", callback_data="navigate_to_categories"))
         markup.add(InlineKeyboardButton("Finalizar pedido", callback_data="finalizar_pedido"))
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Produto adicionado ao carrinho! \nDeseja comprar outros produtos?", reply_markup=markup)
+        bot.send_message(chat_id=call.message.chat.id, text="Produto adicionado ao carrinho! \nDeseja comprar outros produtos?", reply_markup=markup)
     else:
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Erro ao adicionar o produto {product_name} ao carrinho.")
+        bot.send_message(chat_id=call.message.chat.id, text=f"Erro ao adicionar o produto {product_name} ao carrinho.")
     
 def get_product_id_by_name(product_name):
     url = f"{API_BASE_URL}/produto/data/"
@@ -176,7 +188,7 @@ def receber_endereco_entrega(message):
     descricao = "Pagamento do pedido:" + " + ".join(get_product_names(ID_PRODUTOS_PEDIDO))
     
     enviar_pix_qr_code(message.chat.id, valor_total, chave_pix, descricao, bot)
-    bot.send_message(message.chat.id, f"Pedido finalizado! Use o QR Code abaixo para realizar o pagamento via Pix.\n\nEndereço de entrega: {ENDERECO_ENTREGA}")
+    bot.send_message(message.chat.id, f"Pedido finalizado! Use o QR Code acima para realizar o pagamento via Pix.\n\nEndereço de entrega: {ENDERECO_ENTREGA}")
 
 def get_product_names(produtos_ids):
     url = f"{API_BASE_URL}/produto/data/"
