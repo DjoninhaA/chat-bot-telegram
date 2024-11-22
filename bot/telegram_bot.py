@@ -180,10 +180,11 @@ def receber_endereco_entrega(message):
     # Enviar o pedido para o backend
     pedido_data = {
         "status": 0,  # Status inicial do pedido
-        "valor": valor_total,
-        "cliente": message.chat.id,  # Usar o chat_id como identificador do cliente
+        "cliente": f"{message.chat.first_name} {message.chat.last_name}",  # Nome do cliente
         "endereco_entrega": ENDERECO_ENTREGA,
-        "produtos_ids": ID_PRODUTOS_PEDIDO
+        "produtos_ids": ID_PRODUTOS_PEDIDO,
+        "chat_id": message.chat.id,  # Usar o chat_id como identificador do cliente
+        "username": message.chat.username  # Nome de usuário do cliente
     }
     response = requests.post(f"{API_BASE_URL}/pedido/criar/", json=pedido_data)
     

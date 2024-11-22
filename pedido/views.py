@@ -46,7 +46,7 @@ def alterar_status(request, pedido_id):
             pedido.save()
 
             # Enviar notificação ao bot
-            send_status_update_to_bot(pedido.cliente, pedido.id, status)
+            send_status_update_to_bot(pedido.id, status)
 
             return JsonResponse({'status': pedido.get_status_display()}, status=200)
 
@@ -55,9 +55,11 @@ def alterar_status(request, pedido_id):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-def send_status_update_to_bot(cliente, pedido_id, status):
-    chat_id = get_chat_id_by_cliente(cliente)  # Função para obter o chat_id do cliente
-    status_message = f"O status do seu pedido #{pedido_id} foi atualizado para: {get_status_string(status)}"
+def send_status_update_to_bot(pedido_id, status):
+    print(f"Enviando notificação ao bot para pedido {pedido_id} com status {status}")
+    pedido = Pedido.objects.get(id=pedido_id)
+    chat_id = pedido.chat_id
+    status_message = f"O status do seu pedido foi atualizado para: **{get_status_string(status)}**"
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {
         'chat_id': chat_id,
@@ -65,15 +67,11 @@ def send_status_update_to_bot(cliente, pedido_id, status):
     }
     requests.post(url, json=payload)
 
-def get_chat_id_by_cliente(cliente):
-    # Implementar lógica para obter o chat_id do cliente com base no nome ou ID do cliente
-    pass
-
 @login_required
 def search_pedidos(request):
     query = request.GET.get('query', '')
 
-    if query.isdigit():
+    if (query.isdigit()):
         pedidos = Pedido.objects.filter(id=int(query))
     else:
         pedidos = Pedido.objects.filter(cliente__icontains=query)
@@ -83,7 +81,7 @@ def search_pedidos(request):
         pedidos_data.append({
             'id': pedido.id,
             'status': get_status_string(pedido.status),
-            'valor': pedido.valor,
+            """ 'valor': pedido.valor, """
             'cliente': pedido.cliente,
             'produtos': [produto.nome for produto in pedido.produto.all()],
         })
@@ -105,7 +103,9 @@ def listar_pedidos(request):
                     'status': get_status_string(pedido.status),
                     'valor': pedido.valor,
                     'cliente': pedido.cliente,
-                   'produtos': [{
+                    'chat_id': pedido.chat_id,  # Novo campo
+                    'username': pedido.username,  # Novo campo
+                    'produtos': [{
                         'id': produto.id,
                         'nome': produto.nome  # Adicionando o nome do produto
                     } for produto in pedido.produto.all()],
@@ -124,6 +124,7 @@ def pedido_create(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
+            print("Dados recebidos:", data)  # Adiciona log para verificar os dados recebidos
 
             # Inicializar o valor total
             valor_total = 0
@@ -139,19 +140,26 @@ def pedido_create(request):
                 except Produto.DoesNotExist:
                     return JsonResponse({'error': f'Produto com ID {produto_id} não encontrado'}, status=404)
 
+            # Verificar se todos os campos necessários estão presentes
+            required_fields = ['status', 'cliente', 'endereco_entrega', 'chat_id', 'username']
+            for field in required_fields:
+                if field not in data:
+                    return JsonResponse({'error': f'Campo {field} é necessário'}, status=400)
+
             # Criar o pedido com o valor total e cliente
             pedido = Pedido.objects.create(
                 status=data['status'],
                 valor=valor_total,
                 cliente=data['cliente'],
-                endereco_entrega=data['endereco_entrega']
+                endereco_entrega=data['endereco_entrega'],
+                chat_id=data['chat_id'],  # Novo campo
+                username=data['username']  # Novo campo
             )
 
             # Associar os produtos ao pedido
             pedido.produto.set(produtos)
 
             return JsonResponse({'message': 'Pedido criado com sucesso'}, status=201)
-
         except KeyError as e:
             return JsonResponse({'error': f'Campo {e} é necessário'}, status=400)
         except Exception as e:

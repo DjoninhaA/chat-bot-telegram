@@ -11,6 +11,8 @@ class Pedido(models.Model):
     produto = models.ManyToManyField(Produto)
     cliente = models.CharField(max_length=255, default=None)
     endereco_entrega = models.CharField(max_length=255, default='')
+    chat_id = models.CharField(max_length=255, default='')  # Novo campo
+    username = models.CharField(max_length=255, default='', null=True)  # Novo campo
 
     def __str__(self):
         return f"Pedido {self.id} - {self.cliente}"
